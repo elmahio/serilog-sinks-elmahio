@@ -3,8 +3,8 @@
   <metadata>
     <id>Serilog.Sinks.ElmahIO</id>
     <version>$version$</version>
-    <authors>Michiel van Oudheusden</authors>
-    <description>Serilog event sink that writes to the Elmah.io service.</description>
+    <authors>Michiel van Oudheusden,elmah.io</authors>
+    <description>Serilog event sink that writes to the elmah.io service.</description>
     <language>en-US</language>
     <projectUrl>http://serilog.net</projectUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
