@@ -41,8 +41,9 @@
     <AssemblyOriginatorKeyFile>..\..\assets\Serilog.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Elmah.Io.Client">
-      <HintPath>..\..\packages\elmah.io.client.2.0.18-beta\lib\net40\Elmah.Io.Client.dll</HintPath>
+    <Reference Include="Elmah.Io.Client, Version=2.0.20.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\elmah.io.client.2.0.20\lib\net40\Elmah.Io.Client.dll</HintPath>
     </Reference>
     <Reference Include="Serilog, Version=1.4.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
