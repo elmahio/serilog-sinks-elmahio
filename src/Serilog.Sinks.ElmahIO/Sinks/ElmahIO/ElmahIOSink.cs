@@ -47,7 +47,7 @@ namespace Serilog.Sinks.ElmahIO
             var message = new Message(logEvent.RenderMessage(_formatProvider))
             {
                 Severity = LevelToSeverity(logEvent),
-                DateTime = logEvent.Timestamp.DateTime,
+                DateTime = logEvent.Timestamp.DateTime.ToUniversalTime(),
                 Detail = logEvent.Exception != null ? logEvent.Exception.ToString() : null
             };
 
