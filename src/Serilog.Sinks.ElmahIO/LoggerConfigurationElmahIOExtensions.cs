@@ -36,7 +36,7 @@ namespace Serilog
         public static LoggerConfiguration ElmahIO(
             this LoggerSinkConfiguration loggerConfiguration,
              Guid logId,
-            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Error,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
