@@ -25,18 +25,18 @@ namespace Serilog
     public static class LoggerConfigurationElmahIOExtensions
     {
         /// <summary>
-        /// Adds a sink that writes log events to the elmah.io webservice. By default it will only send errors to elmah.io as it is primarily used for error tracking.
+        /// Adds a sink that writes log events to the elmah.io webservice. 
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
         /// <param name="logId">The log id as found on the elmah.io website.</param>
-        /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink.</param>
+        /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink. Set to Verbose by default.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration ElmahIO(
             this LoggerSinkConfiguration loggerConfiguration,
              Guid logId,
-            LogEventLevel restrictedToMinimumLevel = LogEventLevel.Error,
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
