@@ -13,10 +13,9 @@
 // limitations under the License.
 
 using System;
-using Elmah;
+using Elmah.Io.Client;
 using Serilog.Core;
 using Serilog.Events;
-using ErrorLog = Elmah.Io.ErrorLog;
 
 namespace Serilog.Sinks.ElmahIO
 {
@@ -26,7 +25,7 @@ namespace Serilog.Sinks.ElmahIO
     public class ElmahIOSink : ILogEventSink
     {
         readonly IFormatProvider _formatProvider;
-        readonly ErrorLog _errorLog;
+        readonly Logger _logger;
 
         /// <summary>
         /// Construct a sink that saves logs to the specified storage account.
@@ -36,7 +35,7 @@ namespace Serilog.Sinks.ElmahIO
         public ElmahIOSink(IFormatProvider formatProvider, Guid logId)
         {
             _formatProvider = formatProvider;
-            _errorLog = new ErrorLog(logId);
+            _logger = new Logger(logId);
         }
 
         /// <summary>
@@ -45,12 +44,33 @@ namespace Serilog.Sinks.ElmahIO
         /// <param name="logEvent">The log event to write.</param>
         public void Emit(LogEvent logEvent)
         {
-            var error = logEvent.Exception != null ? new Error(logEvent.Exception) : new Error();
+            var message = new Message(logEvent.RenderMessage(_formatProvider))
+            {
+                Severity = LevelToSeverity(logEvent),
+                DateTime = logEvent.Timestamp.DateTime.ToUniversalTime(),
+                Detail = logEvent.Exception != null ? logEvent.Exception.ToString() : null
+            };
 
-            error.Message = logEvent.RenderMessage(_formatProvider);
-            error.Time = logEvent.Timestamp.DateTime;
+            _logger.Log(message);
+        }
 
-            _errorLog.Log(error);
+        static Severity LevelToSeverity(LogEvent logEvent)
+        {
+            switch (logEvent.Level)
+            {
+                case LogEventLevel.Debug:
+                    return Severity.Debug;
+                case LogEventLevel.Error:
+                    return Severity.Error;
+                case LogEventLevel.Fatal:
+                    return Severity.Fatal;
+                case LogEventLevel.Verbose:
+                    return Severity.Verbose;
+                case LogEventLevel.Warning:
+                    return Severity.Warning;
+                default:
+                    return Severity.Information;
+            }
         }
     }
 }
