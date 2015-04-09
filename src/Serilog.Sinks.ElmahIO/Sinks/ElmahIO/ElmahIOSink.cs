@@ -13,6 +13,8 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Elmah.Io.Client;
 using Serilog.Core;
 using Serilog.Events;
@@ -48,10 +50,25 @@ namespace Serilog.Sinks.ElmahIO
             {
                 Severity = LevelToSeverity(logEvent),
                 DateTime = logEvent.Timestamp.DateTime.ToUniversalTime(),
-                Detail = logEvent.Exception != null ? logEvent.Exception.ToString() : null
+                Detail = logEvent.Exception != null ? logEvent.Exception.ToString() : null,
+                Data = PropertiesToData(logEvent),
             };
 
             _logger.Log(message);
+        }
+
+        static List<Item> PropertiesToData(LogEvent logEvent)
+        {
+            var data = new List<Item>();
+            if (logEvent.Exception != null)
+            {
+                data.AddRange(
+                    logEvent.Exception.Data.Keys.Cast<object>()
+                        .Select(key => new Item { Key = key.ToString(), Value = logEvent.Exception.Data[key].ToString() }));
+            }
+
+            data.AddRange(logEvent.Properties.Select(p => new Item { Key = p.Key, Value = p.Value.ToString() }));
+            return data;
         }
 
         static Severity LevelToSeverity(LogEvent logEvent)
