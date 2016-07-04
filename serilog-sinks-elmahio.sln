@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.ElmahIO", "src\Serilog.Sinks.ElmahIO\Serilog.Sinks.ElmahIO.csproj", "{830BBD7E-6068-4D97-B6BF-59051FC2B6B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.ElmahIO.Example", "src\Serilog.Sinks.ElmahIO.Example\Serilog.Sinks.ElmahIO.Example.csproj", "{95FC9FA1-D852-4F69-96B8-3CE59F0CEB1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.ElmahIO.Test", "src\Serilog.Sinks.ElmahIO.Test\Serilog.Sinks.ElmahIO.Test.csproj", "{3154C96B-70F0-4573-8990-C0E4D96B916C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{830BBD7E-6068-4D97-B6BF-59051FC2B6B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{830BBD7E-6068-4D97-B6BF-59051FC2B6B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{830BBD7E-6068-4D97-B6BF-59051FC2B6B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95FC9FA1-D852-4F69-96B8-3CE59F0CEB1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95FC9FA1-D852-4F69-96B8-3CE59F0CEB1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95FC9FA1-D852-4F69-96B8-3CE59F0CEB1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95FC9FA1-D852-4F69-96B8-3CE59F0CEB1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3154C96B-70F0-4573-8990-C0E4D96B916C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3154C96B-70F0-4573-8990-C0E4D96B916C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3154C96B-70F0-4573-8990-C0E4D96B916C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3154C96B-70F0-4573-8990-C0E4D96B916C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

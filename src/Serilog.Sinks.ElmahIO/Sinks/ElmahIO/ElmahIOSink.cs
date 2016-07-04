@@ -27,17 +27,29 @@ namespace Serilog.Sinks.ElmahIO
     public class ElmahIOSink : ILogEventSink
     {
         readonly IFormatProvider _formatProvider;
-        readonly Logger _logger;
+        readonly Elmah.Io.Client.ILogger _logger;
 
         /// <summary>
         /// Construct a sink that saves logs to the specified storage account.
         /// </summary>
-        ///  <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        /// <param name="logId">The log id as found on the Elmah.io website.</param>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <param name="logId">The log id as found on the elmah.io website.</param>
         public ElmahIOSink(IFormatProvider formatProvider, Guid logId)
         {
             _formatProvider = formatProvider;
             _logger = new Logger(logId);
+        }
+
+        /// <summary>
+        /// Construct a sink that saves logs to the specified logger. The purpose of this
+        /// constructor is to re-use an existing ILogger from ELMAH or similar.
+        /// </summary>
+        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <param name="logger">The logger to use.</param>
+        public ElmahIOSink(IFormatProvider formatProvider, Elmah.Io.Client.ILogger logger)
+        {
+            _formatProvider = formatProvider;
+            _logger = logger;
         }
 
         /// <summary>
