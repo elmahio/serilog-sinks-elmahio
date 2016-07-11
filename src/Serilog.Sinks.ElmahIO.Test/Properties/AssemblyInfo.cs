@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle("Serilog.Sinks.ElmahIO")]
-[assembly: AssemblyDescription("Serilog sink for elmah.io service")]
+[assembly: AssemblyTitle("Serilog.Sinks.ElmahIO.Test")]
+[assembly: AssemblyDescription("Serilog tests for the elmah.io sink")]
 [assembly: AssemblyCopyright("Copyright © Serilog Contributors 2014")]
 
 [assembly: InternalsVisibleTo("Serilog.Tests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100fb8d13fd344a1c" +

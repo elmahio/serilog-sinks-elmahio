@@ -12,7 +12,7 @@
     <tags>serilog logging elmah elmah.io error</tags>
     <dependencies>
       <dependency id="Serilog" version="[1.4.204,2)" />
-      <dependency id="elmah.io.client" version="2.0.22" />
+      <dependency id="elmah.io.client" version="2.0.29" />
     </dependencies>
   </metadata>
 </package>
