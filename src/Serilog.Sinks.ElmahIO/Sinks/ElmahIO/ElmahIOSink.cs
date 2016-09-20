@@ -37,7 +37,7 @@ namespace Serilog.Sinks.ElmahIO
         public ElmahIOSink(IFormatProvider formatProvider, Guid logId)
         {
             _formatProvider = formatProvider;
-            _logger = new Logger(logId);
+            _logger = new Elmah.Io.Client.Logger(logId);
         }
 
         /// <summary>
