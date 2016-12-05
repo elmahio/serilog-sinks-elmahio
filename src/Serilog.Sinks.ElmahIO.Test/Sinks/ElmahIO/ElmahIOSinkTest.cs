@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
+using System.Threading;
 using Elmah.Io.Client;
 using Moq;
 using NUnit.Framework;
@@ -26,6 +28,11 @@ namespace Serilog.Sinks.ElmahIO.Test.Sinks.ElmahIO
                 });
             var now = DateTimeOffset.Now;
             var applicationException = new ApplicationException();
+            var principalMock = new Mock<IPrincipal>();
+            var identityMock = new Mock<IIdentity>();
+            identityMock.Setup(x => x.Name).Returns("User");
+            principalMock.Setup(x => x.Identity).Returns(identityMock.Object);
+            Thread.CurrentPrincipal = principalMock.Object;
 
             // Act
             sink.Emit(
@@ -48,6 +55,9 @@ namespace Serilog.Sinks.ElmahIO.Test.Sinks.ElmahIO
             Assert.That(loggedMessage.Data != null);
             Assert.That(loggedMessage.Data.Count, Is.EqualTo(1));
             Assert.That(loggedMessage.Data.First().Key, Is.EqualTo("name"));
+            Assert.That(loggedMessage.Type, Is.EqualTo(applicationException.GetType().FullName));
+            Assert.That(loggedMessage.Hostname, Is.EqualTo(Environment.MachineName));
+            Assert.That(loggedMessage.User, Is.EqualTo("User"));
         }
     }
 }
