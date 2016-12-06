@@ -98,7 +98,8 @@ namespace Serilog.Sinks.ElmahIo.AspNet
 
         private string Type(LogEvent logEvent)
         {
-            return logEvent.Exception == null ? null : logEvent.Exception.GetType().FullName;
+
+            return logEvent.Exception?.GetBaseException().GetType().FullName;
         }
 
         private int? StatusCode(HttpContext httpContext)
