@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Elmah.Io.Client;
 using Serilog.Core;
 using Serilog.Events;
@@ -64,9 +65,24 @@ namespace Serilog.Sinks.ElmahIO
                 DateTime = logEvent.Timestamp.DateTime.ToUniversalTime(),
                 Detail = logEvent.Exception != null ? logEvent.Exception.ToString() : null,
                 Data = PropertiesToData(logEvent),
+                Type = Type(logEvent),
+                Hostname = Environment.MachineName,
+                User = User(),
             };
 
             _logger.Log(message);
+        }
+
+        private string User()
+        {
+            if (Thread.CurrentPrincipal == null || Thread.CurrentPrincipal.Identity == null) return null;
+
+            return Thread.CurrentPrincipal.Identity.Name;
+        }
+
+        private string Type(LogEvent logEvent)
+        {
+            return logEvent.Exception?.GetBaseException().GetType().FullName;
         }
 
         static List<Item> PropertiesToData(LogEvent logEvent)
