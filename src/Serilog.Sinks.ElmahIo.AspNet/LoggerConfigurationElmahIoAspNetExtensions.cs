@@ -35,7 +35,7 @@ namespace Serilog
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration ElmahIoAspNet(
             this LoggerSinkConfiguration loggerConfiguration,
-             Guid logId,
+            Guid logId,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null)
         {
