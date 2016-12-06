@@ -27,7 +27,7 @@ namespace Serilog.Sinks.ElmahIO.Test.Sinks.ElmahIO
                     loggedMessage = msg;
                 });
             var now = DateTimeOffset.Now;
-            var applicationException = new ApplicationException();
+            var exception = Exception();
             var principalMock = new Mock<IPrincipal>();
             var identityMock = new Mock<IIdentity>();
             identityMock.Setup(x => x.Name).Returns("User");
@@ -39,7 +39,7 @@ namespace Serilog.Sinks.ElmahIO.Test.Sinks.ElmahIO
                 new LogEvent(
                     now,
                     LogEventLevel.Error,
-                    applicationException,
+                    exception,
                     new MessageTemplate("Simple test", new List<MessageTemplateToken>()), new List<LogEventProperty>
                     {
                         new LogEventProperty("name", new ScalarValue("value"))
@@ -51,13 +51,18 @@ namespace Serilog.Sinks.ElmahIO.Test.Sinks.ElmahIO
             Assert.That(loggedMessage != null);
             Assert.That(loggedMessage.Severity, Is.EqualTo(Severity.Error));
             Assert.That(loggedMessage.DateTime, Is.EqualTo(now.DateTime.ToUniversalTime()));
-            Assert.That(loggedMessage.Detail, Is.EqualTo(applicationException.ToString()));
+            Assert.That(loggedMessage.Detail, Is.EqualTo(exception.ToString()));
             Assert.That(loggedMessage.Data != null);
             Assert.That(loggedMessage.Data.Count, Is.EqualTo(1));
             Assert.That(loggedMessage.Data.First().Key, Is.EqualTo("name"));
-            Assert.That(loggedMessage.Type, Is.EqualTo(applicationException.GetType().FullName));
+            Assert.That(loggedMessage.Type, Is.EqualTo(typeof(DivideByZeroException).FullName));
             Assert.That(loggedMessage.Hostname, Is.EqualTo(Environment.MachineName));
             Assert.That(loggedMessage.User, Is.EqualTo("User"));
+        }
+
+        private Exception Exception()
+        {
+            return new ApplicationException("error", new DivideByZeroException());
         }
     }
 }

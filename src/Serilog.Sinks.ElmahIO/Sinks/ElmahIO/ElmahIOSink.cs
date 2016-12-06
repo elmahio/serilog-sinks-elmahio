@@ -82,7 +82,7 @@ namespace Serilog.Sinks.ElmahIO
 
         private string Type(LogEvent logEvent)
         {
-            return logEvent.Exception == null ? null : logEvent.Exception.GetType().FullName;
+            return logEvent.Exception?.GetBaseException().GetType().FullName;
         }
 
         static List<Item> PropertiesToData(LogEvent logEvent)
