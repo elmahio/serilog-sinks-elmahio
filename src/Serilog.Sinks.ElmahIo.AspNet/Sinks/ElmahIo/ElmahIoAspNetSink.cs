@@ -64,7 +64,7 @@ namespace Serilog.Sinks.ElmahIo.AspNet
             {
                 Severity = LevelToSeverity(logEvent),
                 DateTime = logEvent.Timestamp.DateTime.ToUniversalTime(),
-                Detail = logEvent.Exception != null ? logEvent.Exception.ToString() : null,
+                Detail = logEvent.Exception?.ToString(),
                 Data = PropertiesToData(logEvent),
                 Type = Type(logEvent),
                 Hostname = Environment.MachineName,
@@ -88,7 +88,7 @@ namespace Serilog.Sinks.ElmahIo.AspNet
 
         private string User(HttpContext httpContext)
         {
-            return httpContext.User != null ? httpContext.User.Identity.Name : null;
+            return httpContext.User?.Identity.Name;
         }
 
         private string Url(HttpContext httpContext)
