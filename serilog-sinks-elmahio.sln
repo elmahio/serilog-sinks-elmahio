@@ -1,19 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.ElmahIO", "src\Serilog.Sinks.ElmahIO\Serilog.Sinks.ElmahIO.csproj", "{830BBD7E-6068-4D97-B6BF-59051FC2B6B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.ElmahIO.Example", "src\Serilog.Sinks.ElmahIO.Example\Serilog.Sinks.ElmahIO.Example.csproj", "{95FC9FA1-D852-4F69-96B8-3CE59F0CEB1D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.ElmahIO.Test", "src\Serilog.Sinks.ElmahIO.Test\Serilog.Sinks.ElmahIO.Test.csproj", "{3154C96B-70F0-4573-8990-C0E4D96B916C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.ElmahIo.AspNet", "src\Serilog.Sinks.ElmahIo.AspNet\Serilog.Sinks.ElmahIo.AspNet.csproj", "{C57A1F1A-70F9-42BE-900D-540F0AFE9982}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.ElmahIo.AspNet.Example", "src\Serilog.Sinks.ElmahIo.AspNet.Example\Serilog.Sinks.ElmahIo.AspNet.Example.csproj", "{13A0E0CD-3209-43B4-BB9A-2DEAF3B6EAE1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5AA6E776-1B1C-407D-83A6-91DE4B9A4F7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.ElmahIo.AspNet.Test", "src\Serilog.Sinks.ElmahIo.AspNet.Test\Serilog.Sinks.ElmahIo.AspNet.Test.csproj", "{7DE52EE3-5F16-487A-9987-34A4D80FEF62}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{4F01F420-E9C7-45C8-AC67-44E9B561EE6F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{2139001D-1350-4327-81B1-CB63E91D1CF1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.ElmahIo.AspNet.Example", "examples\Serilog.Sinks.ElmahIo.AspNet.Example\Serilog.Sinks.ElmahIo.AspNet.Example.csproj", "{13A0E0CD-3209-43B4-BB9A-2DEAF3B6EAE1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.ElmahIO.Example", "examples\Serilog.Sinks.ElmahIO.Example\Serilog.Sinks.ElmahIO.Example.csproj", "{95FC9FA1-D852-4F69-96B8-3CE59F0CEB1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.ElmahIo.AspNet.Test", "test\Serilog.Sinks.ElmahIo.AspNet.Test\Serilog.Sinks.ElmahIo.AspNet.Test.csproj", "{7DE52EE3-5F16-487A-9987-34A4D80FEF62}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.ElmahIO.Test", "test\Serilog.Sinks.ElmahIO.Test\Serilog.Sinks.ElmahIO.Test.csproj", "{3154C96B-70F0-4573-8990-C0E4D96B916C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +31,6 @@ Global
 		{830BBD7E-6068-4D97-B6BF-59051FC2B6B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{830BBD7E-6068-4D97-B6BF-59051FC2B6B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{830BBD7E-6068-4D97-B6BF-59051FC2B6B1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{95FC9FA1-D852-4F69-96B8-3CE59F0CEB1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{95FC9FA1-D852-4F69-96B8-3CE59F0CEB1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{95FC9FA1-D852-4F69-96B8-3CE59F0CEB1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{95FC9FA1-D852-4F69-96B8-3CE59F0CEB1D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3154C96B-70F0-4573-8990-C0E4D96B916C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3154C96B-70F0-4573-8990-C0E4D96B916C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3154C96B-70F0-4573-8990-C0E4D96B916C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3154C96B-70F0-4573-8990-C0E4D96B916C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C57A1F1A-70F9-42BE-900D-540F0AFE9982}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C57A1F1A-70F9-42BE-900D-540F0AFE9982}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C57A1F1A-70F9-42BE-900D-540F0AFE9982}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -41,12 +39,28 @@ Global
 		{13A0E0CD-3209-43B4-BB9A-2DEAF3B6EAE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13A0E0CD-3209-43B4-BB9A-2DEAF3B6EAE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13A0E0CD-3209-43B4-BB9A-2DEAF3B6EAE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95FC9FA1-D852-4F69-96B8-3CE59F0CEB1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95FC9FA1-D852-4F69-96B8-3CE59F0CEB1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95FC9FA1-D852-4F69-96B8-3CE59F0CEB1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95FC9FA1-D852-4F69-96B8-3CE59F0CEB1D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7DE52EE3-5F16-487A-9987-34A4D80FEF62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7DE52EE3-5F16-487A-9987-34A4D80FEF62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DE52EE3-5F16-487A-9987-34A4D80FEF62}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7DE52EE3-5F16-487A-9987-34A4D80FEF62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3154C96B-70F0-4573-8990-C0E4D96B916C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3154C96B-70F0-4573-8990-C0E4D96B916C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3154C96B-70F0-4573-8990-C0E4D96B916C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3154C96B-70F0-4573-8990-C0E4D96B916C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{830BBD7E-6068-4D97-B6BF-59051FC2B6B1} = {5AA6E776-1B1C-407D-83A6-91DE4B9A4F7B}
+		{C57A1F1A-70F9-42BE-900D-540F0AFE9982} = {5AA6E776-1B1C-407D-83A6-91DE4B9A4F7B}
+		{13A0E0CD-3209-43B4-BB9A-2DEAF3B6EAE1} = {2139001D-1350-4327-81B1-CB63E91D1CF1}
+		{95FC9FA1-D852-4F69-96B8-3CE59F0CEB1D} = {2139001D-1350-4327-81B1-CB63E91D1CF1}
+		{7DE52EE3-5F16-487A-9987-34A4D80FEF62} = {4F01F420-E9C7-45C8-AC67-44E9B561EE6F}
+		{3154C96B-70F0-4573-8990-C0E4D96B916C} = {4F01F420-E9C7-45C8-AC67-44E9B561EE6F}
 	EndGlobalSection
 EndGlobal
