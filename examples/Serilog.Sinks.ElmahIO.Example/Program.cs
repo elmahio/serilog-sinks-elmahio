@@ -15,7 +15,7 @@
 using System;
 using Serilog.Context;
 
-namespace Serilog.Sinks.ElmahIO.Example
+namespace Serilog.Sinks.ElmahIo.Example
 {
     class Program
     {
@@ -25,7 +25,7 @@ namespace Serilog.Sinks.ElmahIO.Example
                 new LoggerConfiguration()
                     .Enrich.WithProperty("Hello", "World")
                     .Enrich.FromLogContext()
-                    .WriteTo.ElmahIO(new Guid("a6ac10b1-98b3-495f-960e-424fb18e3caf"))
+                    .WriteTo.ElmahIo("API_KEY", new Guid("LOG_ID"))
                     .CreateLogger();
 
             using (LogContext.PushProperty("LogContext property", "with some value"))

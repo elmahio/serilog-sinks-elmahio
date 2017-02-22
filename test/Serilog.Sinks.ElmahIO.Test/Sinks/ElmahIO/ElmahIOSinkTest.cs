@@ -1,38 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading;
 using Elmah.Io.Client;
+using Elmah.Io.Client.Models;
 using Moq;
 using NUnit.Framework;
 using Serilog.Events;
 using Serilog.Parsing;
 
-namespace Serilog.Sinks.ElmahIO.Test.Sinks.ElmahIO
+namespace Serilog.Sinks.ElmahIo.Test
 {
-    public class ElmahIOSinkTest
+    public class ElmahIoSinkTest
     {
         [Test]
         public void CanEmit()
         {
             // Arrange
-            var loggerMock = new Mock<Elmah.Io.Client.ILogger>();
-            var sink = new ElmahIOSink(null, loggerMock.Object);
-            Message loggedMessage = null;
-            loggerMock
-                .Setup(x => x.Log(It.IsAny<Message>()))
-                .Callback<Message>(msg =>
+            var clientMock = new Mock<IElmahioAPI>();
+            var messagesMock = new Mock<IMessages>();
+            clientMock.Setup(x => x.Messages).Returns(messagesMock.Object);
+            var sink = new ElmahIoSink(null, clientMock.Object);
+            CreateMessage loggedMessage = null;
+            messagesMock
+                .Setup(x => x.CreateAndNotify(It.IsAny<Guid>(), It.IsAny<CreateMessage>()))
+                .Callback<Guid, CreateMessage>((logId, msg) =>
                 {
                     loggedMessage = msg;
                 });
             var now = DateTimeOffset.Now;
             var exception = Exception();
+#if !DOTNETCORE
             var principalMock = new Mock<IPrincipal>();
             var identityMock = new Mock<IIdentity>();
             identityMock.Setup(x => x.Name).Returns("User");
             principalMock.Setup(x => x.Identity).Returns(identityMock.Object);
             Thread.CurrentPrincipal = principalMock.Object;
+#endif
 
             // Act
             sink.Emit(
@@ -49,7 +55,7 @@ namespace Serilog.Sinks.ElmahIO.Test.Sinks.ElmahIO
 
             // Assert
             Assert.That(loggedMessage != null);
-            Assert.That(loggedMessage.Severity, Is.EqualTo(Severity.Error));
+            Assert.That(loggedMessage.Severity, Is.EqualTo(Severity.Error.ToString()));
             Assert.That(loggedMessage.DateTime, Is.EqualTo(now.DateTime.ToUniversalTime()));
             Assert.That(loggedMessage.Detail, Is.EqualTo(exception.ToString()));
             Assert.That(loggedMessage.Data != null);
@@ -57,12 +63,14 @@ namespace Serilog.Sinks.ElmahIO.Test.Sinks.ElmahIO
             Assert.That(loggedMessage.Data.First().Key, Is.EqualTo("name"));
             Assert.That(loggedMessage.Type, Is.EqualTo(typeof(DivideByZeroException).FullName));
             Assert.That(loggedMessage.Hostname, Is.EqualTo(Environment.MachineName));
+#if !DOTNETCORE
             Assert.That(loggedMessage.User, Is.EqualTo("User"));
+#endif
         }
 
         private Exception Exception()
         {
-            return new ApplicationException("error", new DivideByZeroException());
+            return new Exception("error", new DivideByZeroException());
         }
     }
 }

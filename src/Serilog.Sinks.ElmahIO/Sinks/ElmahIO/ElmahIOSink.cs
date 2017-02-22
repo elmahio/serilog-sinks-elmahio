@@ -15,42 +15,47 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using Elmah.Io.Client;
+using Elmah.Io.Client.Models;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Serilog.Sinks.ElmahIO
+namespace Serilog.Sinks.ElmahIo
 {
     /// <summary>
-    /// Writes log events to the Elmah.IO service.
+    /// Writes log events to the elmah.io service.
     /// </summary>
-    public class ElmahIOSink : ILogEventSink
+    public class ElmahIoSink : ILogEventSink
     {
         readonly IFormatProvider _formatProvider;
-        readonly Elmah.Io.Client.ILogger _logger;
+        readonly Guid _logId;
+        readonly IElmahioAPI _client;
 
         /// <summary>
         /// Construct a sink that saves logs to the specified storage account.
         /// </summary>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        /// <param name="logId">The log id as found on the elmah.io website.</param>
-        public ElmahIOSink(IFormatProvider formatProvider, Guid logId)
+        /// <param name="apiKey">An API key from the organization containing the log.</param>
+        /// <param name="logId">The log ID as found on the elmah.io website.</param>
+        public ElmahIoSink(IFormatProvider formatProvider, string apiKey, Guid logId)
         {
             _formatProvider = formatProvider;
-            _logger = new Elmah.Io.Client.Logger(logId);
+            _logId = logId;
+            _client = ElmahioAPI.Create(apiKey);
         }
 
         /// <summary>
         /// Construct a sink that saves logs to the specified logger. The purpose of this
-        /// constructor is to re-use an existing ILogger from ELMAH or similar.
+        /// constructor is to re-use an existing client from ELMAH or similar.
         /// </summary>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        /// <param name="logger">The logger to use.</param>
-        public ElmahIOSink(IFormatProvider formatProvider, Elmah.Io.Client.ILogger logger)
+        /// <param name="client">The client to use.</param>
+        public ElmahIoSink(IFormatProvider formatProvider, IElmahioAPI client)
         {
             _formatProvider = formatProvider;
-            _logger = logger;
+            _client = client;
         }
 
         /// <summary>
@@ -59,25 +64,32 @@ namespace Serilog.Sinks.ElmahIO
         /// <param name="logEvent">The log event to write.</param>
         public void Emit(LogEvent logEvent)
         {
-            var message = new Message(logEvent.RenderMessage(_formatProvider))
+            var message = new CreateMessage
             {
+                Title = logEvent.RenderMessage(_formatProvider),
                 Severity = LevelToSeverity(logEvent),
                 DateTime = logEvent.Timestamp.DateTime.ToUniversalTime(),
-                Detail = logEvent.Exception != null ? logEvent.Exception.ToString() : null,
+                Detail = logEvent.Exception?.ToString(),
                 Data = PropertiesToData(logEvent),
                 Type = Type(logEvent),
+#if !DOTNETCORE
                 Hostname = Environment.MachineName,
+#else
+                Hostname = Environment.GetEnvironmentVariable("COMPUTERNAME"),
+#endif
                 User = User(),
             };
 
-            _logger.Log(message);
+            _client.Messages.CreateAndNotify(_logId, message);
         }
 
         private string User()
         {
-            if (Thread.CurrentPrincipal == null || Thread.CurrentPrincipal.Identity == null) return null;
-
-            return Thread.CurrentPrincipal.Identity.Name;
+#if !DOTNETCORE
+            return Thread.CurrentPrincipal?.Identity?.Name;
+#else
+            return ClaimsPrincipal.Current?.Identity?.Name;
+#endif
         }
 
         private string Type(LogEvent logEvent)
@@ -99,22 +111,22 @@ namespace Serilog.Sinks.ElmahIO
             return data;
         }
 
-        static Severity LevelToSeverity(LogEvent logEvent)
+        static string LevelToSeverity(LogEvent logEvent)
         {
             switch (logEvent.Level)
             {
                 case LogEventLevel.Debug:
-                    return Severity.Debug;
+                    return Severity.Debug.ToString();
                 case LogEventLevel.Error:
-                    return Severity.Error;
+                    return Severity.Error.ToString();
                 case LogEventLevel.Fatal:
-                    return Severity.Fatal;
+                    return Severity.Fatal.ToString();
                 case LogEventLevel.Verbose:
-                    return Severity.Verbose;
+                    return Severity.Verbose.ToString();
                 case LogEventLevel.Warning:
-                    return Severity.Warning;
+                    return Severity.Warning.ToString();
                 default:
-                    return Severity.Information;
+                    return Severity.Information.ToString();
             }
         }
     }

@@ -15,33 +15,35 @@
 using System;
 using Serilog.Configuration;
 using Serilog.Events;
-using Serilog.Sinks.ElmahIO;
+using Serilog.Sinks.ElmahIo;
 
 namespace Serilog
 {
     /// <summary>
-    /// Adds the WriteTo.ElmahIO() extension method to <see cref="LoggerConfiguration"/>.
+    /// Adds the WriteTo.ElmahIo() extension method to <see cref="LoggerConfiguration"/>.
     /// </summary>
-    public static class LoggerConfigurationElmahIOExtensions
+    public static class LoggerConfigurationElmahIoExtensions
     {
         /// <summary>
         /// Adds a sink that writes log events to the elmah.io webservice. 
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
-        /// <param name="logId">The log id as found on the elmah.io website.</param>
+        /// <param name="apiKey">An API key from the organization containing the log.</param>
+        /// <param name="logId">The log ID as found on the elmah.io website.</param>
         /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink. Set to Verbose by default.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        public static LoggerConfiguration ElmahIO(
+        public static LoggerConfiguration ElmahIo(
             this LoggerSinkConfiguration loggerConfiguration,
-             Guid logId,
+            string apiKey,
+            Guid logId,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException("loggerConfiguration");
+            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
             return loggerConfiguration.Sink(
-                new ElmahIOSink(formatProvider, logId),
+                new ElmahIoSink(formatProvider, apiKey, logId),
                 restrictedToMinimumLevel);
         }
 

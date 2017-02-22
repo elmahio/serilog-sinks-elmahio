@@ -1,85 +1,40 @@
-param(
-    [String] $majorMinor = "0.0",  # 2.0
-    [String] $patch = "0",         # $env:APPVEYOR_BUILD_VERSION
-    [String] $customLogger = "",   # C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll
-    [Switch] $notouch,
-    [String] $sln                  # e.g serilog-sink-name
-)
+$solution = "$project.sln"
+$test = "test\\Serilog.Sinks.ElmahIo.Test\\project.json"
+$projectFolder = "src\\Serilog.Sinks.ElmahIo"
+$project = $projectFolder + "\\project.json"
 
-function Set-AssemblyVersions($informational, $assembly)
+function Invoke-Build()
 {
-    (Get-Content assets/CommonAssemblyInfo.cs) |
-        ForEach-Object { $_ -replace """1.0.0.0""", """$assembly""" } |
-        ForEach-Object { $_ -replace """1.0.0""", """$informational""" } |
-        ForEach-Object { $_ -replace """1.1.1.1""", """$($informational).0""" } |
-        Set-Content assets/CommonAssemblyInfo.cs
-}
+    Write-Output "Building"
 
-function Install-NuGetPackages($solution)
-{
-    nuget restore $solution
-}
+	if(Test-Path .\artifacts) {
+		echo "build: Cleaning .\artifacts"
+		Remove-Item .\artifacts -Force -Recurse
+	}
 
-function Invoke-MSBuild($solution, $customLogger)
-{
-    if ($customLogger)
+
+    & dotnet restore $test --verbosity Warning
+    & dotnet restore $project --verbosity Warning
+
+    Write-Host "Setting version to $env:APPVEYOR_BUILD_VERSION"
+    (Get-Content $project).replace("1.0.0-*", $env:APPVEYOR_BUILD_VERSION) | Set-Content $project
+	
+    & dotnet test $test -c Release
+    if($LASTEXITCODE -ne 0) 
     {
-        msbuild "$solution" /verbosity:minimal /p:Configuration=Release /logger:"$customLogger"
+        Write-Output "The tests failed"
+        exit 1 
     }
-    else
+  
+    & dotnet pack $project -c Release -o .\artifacts 
+  
+    if($LASTEXITCODE -ne 0) 
     {
-        msbuild "$solution" /verbosity:minimal /p:Configuration=Release
+        Write-Output "Packing the sink failed"
+        exit 1 
     }
-}
-
-function Invoke-NuGetPackProj($csproj)
-{
-    nuget pack -Prop Configuration=Release -Symbols $csproj
-}
-
-function Invoke-NuGetPackSpec($nuspec, $version)
-{
-    nuget pack $nuspec -Version $version -OutputDirectory ..\..\
-}
-
-function Invoke-NuGetPack($version)
-{
-    ls src/**/*.csproj |
-        Where-Object { -not ($_.Name -like "*net40*") } |
-        ForEach-Object { Invoke-NuGetPackProj $_ }
-}
-
-function Invoke-Build($majorMinor, $patch, $customLogger, $notouch, $sln)
-{
-    $package="$majorMinor.$patch"
-    $slnfile = "$sln.sln"
-
-    Write-Output "$sln $package"
-
-    if (-not $notouch)
-    {
-        $assembly = "$majorMinor.0.0"
-
-        Write-Output "Assembly version will be set to $assembly"
-        Set-AssemblyVersions $package $assembly
-    }
-
-    Install-NuGetPackages $slnfile
-    
-    Invoke-MSBuild $slnfile $customLogger
-
-    Invoke-NuGetPack $package
+    Write-Output "Building done"
 }
 
 $ErrorActionPreference = "Stop"
-
-if (-not $sln)
-{
-    $slnfull = ls *.sln |
-        Where-Object { -not ($_.Name -like "*net40*") } |
-        Select -first 1
-
-    $sln = $slnfull.BaseName
-}
-
-Invoke-Build $majorMinor $patch $customLogger $notouch $sln
+Invoke-Build 

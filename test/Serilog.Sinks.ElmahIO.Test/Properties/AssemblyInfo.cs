@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle("Serilog.Sinks.ElmahIO.Test")]
+[assembly: AssemblyTitle("Serilog.Sinks.ElmahIo.Test")]
 [assembly: AssemblyDescription("Serilog tests for the elmah.io sink")]
 [assembly: AssemblyCopyright("Copyright © Serilog Contributors 2014")]
 

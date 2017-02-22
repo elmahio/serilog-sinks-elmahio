@@ -1,0 +1,64 @@
+{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "warningsAsErrors": true,
+    "xmlDoc": true
+  },
+  "authors": [
+    "Michiel van Oudheusden, elmah.io, Serilog Contributors"
+  ],
+  "tools": {
+    "dotnet-version": "1.1.0"
+  },
+  "packOptions": {
+    "tags": [
+      "serilog",
+      "logging",
+      "elmah",
+      "elmah.io",
+      "error"
+    ],
+    "projectUrl": "https://github.com/serilog/serilog-sinks-elmahio",
+    "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
+    "iconUrl": "http://serilog.net/images/serilog-sink-nuget.png",
+    "summary": "Serilog event sink that writes to the elmah.io service."
+  },
+  "dependencies": {
+    "Serilog": "[2,3)",
+    "elmah.io.client": "[3.0.41-pre,4)"
+  },
+  "configurations": {
+    "Debug": {
+      "buildOptions": {
+        "define": [
+          "DEBUG",
+          "TRACE"
+        ]
+      }
+    },
+    "Release": {
+      "buildOptions": {
+        "define": [
+          "RELEASE",
+          "TRACE"
+        ],
+        "optimize": true
+      }
+    }
+  },
+  "frameworks": {
+    "net45": {},
+    "netstandard1.3": {
+      "buildOptions": {
+        "define": [
+          "DOTNETCORE",
+          "NO_SERIALIZATION"
+        ]
+      },
+      "dependencies": {
+        "NETStandard.Library": "1.6.0",
+        "System.Security.Claims": "4.3.0"
+      }
+    }
+  }
+}
