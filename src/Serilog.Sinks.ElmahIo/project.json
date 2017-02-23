@@ -2,7 +2,6 @@
   "version": "3.0.0",
   "buildOptions": {
     "warningsAsErrors": true,
-    "keyFile": "../../assets/Serilog.snk",
     "xmlDoc": true
   },
   "authors": [
