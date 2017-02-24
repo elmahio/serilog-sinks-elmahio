@@ -1,51 +1,29 @@
-$solution = "$project.sln"
-$test = "test\\Serilog.Sinks.ElmahIo.Test\\project.json"
-$projectFolder = "src\\Serilog.Sinks.ElmahIo"
-$project = $projectFolder + "\\project.json"
+Push-Location $PSScriptRoot
 
-function Invoke-Build()
-{
-    Write-Output "Building"
+if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
 
-	if(Test-Path .\artifacts) {
-		echo "build: Cleaning .\artifacts"
-		Remove-Item .\artifacts -Force -Recurse
-	}
+& dotnet restore --no-cache
 
+$branch = @{ $true = $env:APPVEYOR_REPO_BRANCH; $false = $(git symbolic-ref --short -q HEAD) }[$env:APPVEYOR_REPO_BRANCH -ne $NULL];
+$revision = @{ $true = "{0:00000}" -f [convert]::ToInt32("0" + $env:APPVEYOR_BUILD_NUMBER, 10); $false = "local" }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
+$suffix = @{ $true = ""; $false = "$branch-$revision"}[$branch -eq "master" -and $revision -ne "local"]
 
-    & dotnet restore $test --verbosity Warning
-    & dotnet restore $project --verbosity Warning
+foreach ($src in ls src/Serilog.*) {
+    Push-Location $src
 
-    # calculate version, only when on a branch
-    if ($(git log -n 1 --pretty=%d HEAD).Trim() -ne '(HEAD)')
-    {
-        Write-Output "Determining version number using gitversion"
+    & dotnet pack -c Release -o ..\..\.\artifacts --version-suffix=$suffix
+    if($LASTEXITCODE -ne 0) { exit 1 }    
 
-        & cd $projectFolder 
-        & dotnet gitversion $project --verbosity Warning
-        & cd "..\\.."
-    }
-    else
-    {
-        Write-Output "In a detached HEAD mode, unable to determine the version number using gitversion"		
-    }
-
-    & dotnet test $test -c Release
-    if($LASTEXITCODE -ne 0) 
-    {
-        Write-Output "The tests failed"
-        exit 1 
-    }
-  
-    & dotnet pack $project -c Release -o .\artifacts 
-  
-    if($LASTEXITCODE -ne 0) 
-    {
-        Write-Output "Packing the sink failed"
-        exit 1 
-    }
-    Write-Output "Building done"
+    Pop-Location
 }
 
-$ErrorActionPreference = "Stop"
-Invoke-Build 
+foreach ($test in ls test/Serilog.*.Tests) {
+    Push-Location $test
+
+    & dotnet test -c Release
+    if($LASTEXITCODE -ne 0) { exit 2 }
+
+    Pop-Location
+}
+
+Pop-Location
