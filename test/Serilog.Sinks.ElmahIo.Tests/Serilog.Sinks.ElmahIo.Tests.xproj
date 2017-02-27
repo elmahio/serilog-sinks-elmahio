@@ -7,7 +7,7 @@
   <Import Project="$(VSToolsPath)\DotNet\Microsoft.DotNet.Props" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>667f95f7-28af-48fa-9b69-ff5434afb064</ProjectGuid>
-    <RootNamespace>Serilog.Sinks.ElmahIo.Test</RootNamespace>
+    <RootNamespace>Serilog.Sinks.ElmahIo.Tests</RootNamespace>
     <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">.\obj</BaseIntermediateOutputPath>
     <OutputPath Condition="'$(OutputPath)'=='' ">.\bin\</OutputPath>
   </PropertyGroup>

@@ -9,7 +9,7 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.ElmahIo", "sr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{A0BBF7B8-3CF5-4BE1-8C71-3D6FB1CB72FE}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.ElmahIo.Test", "test\Serilog.Sinks.ElmahIo.Test\Serilog.Sinks.ElmahIo.Test.xproj", "{667F95F7-28AF-48FA-9B69-FF5434AFB064}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.ElmahIo.Tests", "test\Serilog.Sinks.ElmahIo.Tests\Serilog.Sinks.ElmahIo.Tests.xproj", "{667F95F7-28AF-48FA-9B69-FF5434AFB064}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{A65A8801-9663-409E-8226-A9EC572B35F5}"
 EndProject

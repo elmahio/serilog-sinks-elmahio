@@ -11,7 +11,7 @@ using NUnit.Framework;
 using Serilog.Events;
 using Serilog.Parsing;
 
-namespace Serilog.Sinks.ElmahIo.Test
+namespace Serilog.Sinks.ElmahIo.Tests
 {
     public class ElmahIoSinkTest
     {
