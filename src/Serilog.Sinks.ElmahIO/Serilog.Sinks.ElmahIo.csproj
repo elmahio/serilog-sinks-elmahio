@@ -33,12 +33,7 @@
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <DefineConstants>$(DefineConstants);DOTNETCORE;NO_SERIALIZATION</DefineConstants>
+     <DefineConstants>$(DefineConstants);DOTNETCORE;NO_SERIALIZATION</DefineConstants>
   </PropertyGroup>
-
-  <ItemGroup>
-    <DotNetCliToolReference Include="dotnet-version" Version="1.1.0" />
-    <DotNetCliToolReference Include="dotnet-gitversion" Version="*" />
-  </ItemGroup>
 
 </Project>
