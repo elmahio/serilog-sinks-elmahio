@@ -17,7 +17,7 @@ using Serilog.Context;
 
 namespace Serilog.Sinks.ElmahIo.Example
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
