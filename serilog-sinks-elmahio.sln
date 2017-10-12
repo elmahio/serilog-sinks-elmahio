@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{A6
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.ElmahIo", "src\Serilog.Sinks.ElmahIo\Serilog.Sinks.ElmahIo.csproj", "{A2317307-13D2-4209-9D2F-9430FFDD8A9C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.ElmahIo.Example", "examples\Serilog.Sinks.ElmahIO.Example\Serilog.Sinks.ElmahIo.Example.csproj", "{3E1F69F1-DAA6-4385-A134-8776E6B154E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.ElmahIo.Example", "examples\Serilog.Sinks.ElmahIo.Example\Serilog.Sinks.ElmahIo.Example.csproj", "{3E1F69F1-DAA6-4385-A134-8776E6B154E8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.ElmahIo.Tests", "test\Serilog.Sinks.ElmahIo.Tests\Serilog.Sinks.ElmahIo.Tests.csproj", "{A2F260FD-3EFD-4135-919F-594FF7449575}"
 EndProject
