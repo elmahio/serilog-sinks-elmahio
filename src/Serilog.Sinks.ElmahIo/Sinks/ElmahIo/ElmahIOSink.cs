@@ -64,23 +64,36 @@ namespace Serilog.Sinks.ElmahIo
         /// <param name="logEvent">The log event to write.</param>
         public void Emit(LogEvent logEvent)
         {
-            var message = new CreateMessage
+            try
             {
-                Title = logEvent.RenderMessage(_formatProvider),
-                Severity = LevelToSeverity(logEvent),
-                DateTime = logEvent.Timestamp.DateTime.ToUniversalTime(),
-                Detail = logEvent.Exception?.ToString(),
-                Data = PropertiesToData(logEvent),
-                Type = Type(logEvent),
-#if !DOTNETCORE
-                Hostname = Environment.MachineName,
-#else
-                Hostname = Environment.GetEnvironmentVariable("COMPUTERNAME"),
-#endif
-                User = User(),
-            };
+                var message = new CreateMessage
+                {
+                    Title = logEvent.RenderMessage(_formatProvider),
+                    Severity = LevelToSeverity(logEvent),
+                    DateTime = logEvent.Timestamp.DateTime.ToUniversalTime(),
+                    Detail = logEvent.Exception?.ToString(),
+                    Data = PropertiesToData(logEvent),
+                    Type = Type(logEvent),
+                    Hostname = Hostname(),
+                    User = User(),
+                };
 
-            _client.Messages.CreateAndNotify(_logId, message);
+                _client.Messages.CreateAndNotify(_logId, message);
+            }
+            catch (Exception e)
+            {
+                Debugging.SelfLog.WriteLine("Caught exception while emitting to sink: {0}", e);
+                throw;
+            }
+        }
+
+        private string Hostname()
+        {
+#if !DOTNETCORE
+            return Environment.MachineName;
+#else
+            return Environment.GetEnvironmentVariable("COMPUTERNAME");
+#endif
         }
 
         private string User()
@@ -107,8 +120,52 @@ namespace Serilog.Sinks.ElmahIo
                         .Select(key => new Item { Key = key.ToString(), Value = logEvent.Exception.Data[key].ToString() }));
             }
 
-            data.AddRange(logEvent.Properties.Select(p => new Item { Key = p.Key, Value = p.Value.ToString() }));
+            data.AddRange(logEvent.Properties.SelectMany(p => Properties(p)));
+
             return data;
+        }
+
+        static List<Item> Properties(KeyValuePair<string, LogEventPropertyValue> keyValue)
+        {
+            if (keyValue.Value == null)
+            {
+                return new List<Item>
+                {
+                    new Item { Key = keyValue.Key, Value = null }
+                };
+            }
+
+            // Handle simple things like strings and integers
+            if (keyValue.Value is ScalarValue scalarValue)
+            {
+                return new List<Item>
+                {
+                    new Item { Key = keyValue.Key, Value = scalarValue.Value?.ToString() }
+                };
+            }
+
+            // Handle dictionary types
+            if (keyValue.Value is DictionaryValue dictionaryValue)
+            {
+                return dictionaryValue
+                    .Elements
+                    .SelectMany(element => Properties(new KeyValuePair<string, LogEventPropertyValue>($"{keyValue.Key}.{element.Key}", element.Value)))
+                    .ToList();
+            }
+
+            // Handle complext objects
+            if (keyValue.Value is StructureValue structureValue)
+            {
+                return structureValue
+                    .Properties
+                    .SelectMany(property => Properties(new KeyValuePair<string, LogEventPropertyValue>($"{keyValue.Key}.{property.Name}", property.Value)))
+                    .ToList();
+            }
+
+            return new List<Item>
+            {
+                new Item { Key = keyValue.Key, Value = keyValue.Value.ToString()}
+            };
         }
 
         static string LevelToSeverity(LogEvent logEvent)
