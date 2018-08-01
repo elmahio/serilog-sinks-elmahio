@@ -64,23 +64,36 @@ namespace Serilog.Sinks.ElmahIo
         /// <param name="logEvent">The log event to write.</param>
         public void Emit(LogEvent logEvent)
         {
-            var message = new CreateMessage
+            try
             {
-                Title = logEvent.RenderMessage(_formatProvider),
-                Severity = LevelToSeverity(logEvent),
-                DateTime = logEvent.Timestamp.DateTime.ToUniversalTime(),
-                Detail = logEvent.Exception?.ToString(),
-                Data = PropertiesToData(logEvent),
-                Type = Type(logEvent),
-#if !DOTNETCORE
-                Hostname = Environment.MachineName,
-#else
-                Hostname = Environment.GetEnvironmentVariable("COMPUTERNAME"),
-#endif
-                User = User(),
-            };
+                var message = new CreateMessage
+                {
+                    Title = logEvent.RenderMessage(_formatProvider),
+                    Severity = LevelToSeverity(logEvent),
+                    DateTime = logEvent.Timestamp.DateTime.ToUniversalTime(),
+                    Detail = logEvent.Exception?.ToString(),
+                    Data = PropertiesToData(logEvent),
+                    Type = Type(logEvent),
+                    Hostname = Hostname(),
+                    User = User(),
+                };
 
-            _client.Messages.CreateAndNotify(_logId, message);
+                _client.Messages.CreateAndNotify(_logId, message);
+            }
+            catch (Exception e)
+            {
+                Debugging.SelfLog.WriteLine("Caught exception while emitting to sink: {0}", e);
+                throw;
+            }
+        }
+
+        private string Hostname()
+        {
+#if !DOTNETCORE
+            return Environment.MachineName;
+#else
+            return Environment.GetEnvironmentVariable("COMPUTERNAME");
+#endif
         }
 
         private string User()
