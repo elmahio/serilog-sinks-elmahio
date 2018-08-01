@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <PackageReference Include="Serilog" Version="2.3.0" />
-    <PackageReference Include="elmah.io.client" Version="[3.0.46,4)" />
+    <PackageReference Include="elmah.io.client" Version="[3.2.53,4)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
