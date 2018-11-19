@@ -42,6 +42,10 @@ namespace Serilog.Sinks.ElmahIo.Example
             {
                 logger.Error(e, "Some exception");
             }
+
+            logger.Information("A message with {type} {hostname} {application} {user} {source} {method} {version} {url} and {statusCode}",
+                "custom type", "custom hostname", "custom application", "custom user", "custom source", "custom method",
+                "custom version", "custom url", 500);
         }
     }
 }

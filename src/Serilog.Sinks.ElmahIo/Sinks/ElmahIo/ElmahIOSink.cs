@@ -74,9 +74,14 @@ namespace Serilog.Sinks.ElmahIo
                     Detail = logEvent.Exception?.ToString(),
                     Data = PropertiesToData(logEvent),
                     Type = Type(logEvent),
-                    Hostname = Hostname(),
-                    User = User(),
+                    Hostname = Hostname(logEvent),
+                    Application = Application(logEvent),
+                    User = User(logEvent),
                     Source = Source(logEvent),
+                    Method = Method(logEvent),
+                    Version = Version(logEvent),
+                    Url = Url(logEvent),
+                    StatusCode = StatusCode(logEvent),
                 };
 
                 _client.Messages.CreateAndNotify(_logId, message);
@@ -88,13 +93,45 @@ namespace Serilog.Sinks.ElmahIo
             }
         }
 
+        private int? StatusCode(LogEvent logEvent)
+        {
+            var statusCode = String(logEvent, "statuscode");
+            if (string.IsNullOrWhiteSpace(statusCode)) return null;
+            if (!int.TryParse(statusCode, out int code)) return null;
+            return code;
+        }
+
+        private string Url(LogEvent logEvent)
+        {
+            return String(logEvent, "url");
+        }
+
+        private string Version(LogEvent logEvent)
+        {
+            return String(logEvent, "version");
+        }
+
+        private string Method(LogEvent logEvent)
+        {
+            return String(logEvent, "method");
+        }
+
+        private string Application(LogEvent logEvent)
+        {
+            return String(logEvent, "application");
+        }
+
         private string Source(LogEvent logEvent)
         {
+            var source = String(logEvent, "source");
+            if (!string.IsNullOrWhiteSpace(source)) return source;
             return logEvent.Exception?.GetBaseException().Source;
         }
 
-        private string Hostname()
+        private string Hostname(LogEvent logEvent)
         {
+            var hostname = String(logEvent, "hostname");
+            if (!string.IsNullOrWhiteSpace(hostname)) return hostname;
 #if !DOTNETCORE
             return Environment.MachineName;
 #else
@@ -102,8 +139,10 @@ namespace Serilog.Sinks.ElmahIo
 #endif
         }
 
-        private string User()
+        private string User(LogEvent logEvent)
         {
+            var user = String(logEvent, "user");
+            if (!string.IsNullOrWhiteSpace(user)) return user;
 #if !DOTNETCORE
             return Thread.CurrentPrincipal?.Identity?.Name;
 #else
@@ -113,6 +152,8 @@ namespace Serilog.Sinks.ElmahIo
 
         private string Type(LogEvent logEvent)
         {
+            var type = String(logEvent, "type");
+            if (!string.IsNullOrWhiteSpace(type)) return type;
             return logEvent.Exception?.GetBaseException().GetType().FullName;
         }
 
@@ -191,6 +232,16 @@ namespace Serilog.Sinks.ElmahIo
                 default:
                     return Severity.Information.ToString();
             }
+        }
+
+        static string String(LogEvent logEvent, string name)
+        {
+            if (logEvent == null || logEvent.Properties == null || !logEvent.Properties.Any()) return null;
+            if (!logEvent.Properties.Keys.Any(key => key.ToLower().Equals(name.ToLower()))) return null;
+
+            var property = logEvent.Properties.First(prop => prop.Key.ToLower().Equals(name.ToLower()));
+            var properties = Properties(property);
+            return string.Join(", ", properties.Select(p => p.Value));
         }
     }
 }
