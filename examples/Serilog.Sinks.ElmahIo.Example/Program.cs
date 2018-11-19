@@ -32,6 +32,16 @@ namespace Serilog.Sinks.ElmahIo.Example
             {
                 logger.Error("This is a log message with a {TypeOfProperty} message", "structured");
             }
+
+            try
+            {
+                var i = 0;
+                var result = 42 / i;
+            }
+            catch (Exception e)
+            {
+                logger.Error(e, "Some exception");
+            }
         }
     }
 }

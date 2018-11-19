@@ -76,6 +76,7 @@ namespace Serilog.Sinks.ElmahIo
                     Type = Type(logEvent),
                     Hostname = Hostname(),
                     User = User(),
+                    Source = Source(logEvent),
                 };
 
                 _client.Messages.CreateAndNotify(_logId, message);
@@ -85,6 +86,11 @@ namespace Serilog.Sinks.ElmahIo
                 Debugging.SelfLog.WriteLine("Caught exception while emitting to sink: {0}", e);
                 throw;
             }
+        }
+
+        private string Source(LogEvent logEvent)
+        {
+            return logEvent.Exception?.GetBaseException().Source;
         }
 
         private string Hostname()
