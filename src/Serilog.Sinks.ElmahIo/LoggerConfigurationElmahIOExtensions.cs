@@ -35,6 +35,7 @@ namespace Serilog
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
+        [Obsolete("Use the overload accepting ElmahIoSinksOptions")]
         public static LoggerConfiguration ElmahIo(
             this LoggerSinkConfiguration loggerConfiguration,
             string apiKey,
@@ -55,6 +56,7 @@ namespace Serilog
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
+        [Obsolete("Use the overload accepting ElmahIoSinksOptions")]
         public static LoggerConfiguration ElmahIo(
             this LoggerSinkConfiguration loggerConfiguration,
             string apiKey,
@@ -62,11 +64,31 @@ namespace Serilog
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null)
         {
-            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
-            return loggerConfiguration.Sink(
-                new ElmahIoSink(formatProvider, apiKey, logId),
-                restrictedToMinimumLevel);
+            return ElmahIo(loggerConfiguration, new ElmahIoSinkOptions
+            {
+                ApiKey = apiKey,
+                LogId = logId,
+                MinimumLogEventLevel = restrictedToMinimumLevel,
+                FormatProvider = formatProvider,
+            });
         }
 
+        /// <summary>
+        /// Adds a sink that writes log events to elmah.io. 
+        /// </summary>
+        /// <param name="loggerConfiguration">The logger configuration.</param>
+        /// <param name="options"></param>
+        /// <returns>Logger configuration, allowing configuration to continue.</returns>
+        /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
+        public static LoggerConfiguration ElmahIo(
+            this LoggerSinkConfiguration loggerConfiguration,
+            ElmahIoSinkOptions options)
+        {
+            if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
+            return loggerConfiguration.Sink(
+                new ElmahIoSink(options),
+                restrictedToMinimumLevel: options.MinimumLogEventLevel ?? LevelAlias.Minimum,
+                levelSwitch: options.LevelSwitch);
+        }
     }
 }

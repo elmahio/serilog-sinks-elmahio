@@ -25,7 +25,11 @@ namespace Serilog.Sinks.ElmahIo.Example
                 new LoggerConfiguration()
                     .Enrich.WithProperty("Hello", "World")
                     .Enrich.FromLogContext()
-                    .WriteTo.ElmahIo("API_KEY", new Guid("LOG_ID"))
+                    .WriteTo.ElmahIo(new ElmahIoSinkOptions
+                    {
+                        ApiKey = "API_KEY",
+                        LogId = new Guid("LOG_ID"),
+                    })
                     .CreateLogger();
 
             using (LogContext.PushProperty("LogContext property", "with some value"))
@@ -46,6 +50,9 @@ namespace Serilog.Sinks.ElmahIo.Example
             logger.Information("A message with {type} {hostname} {application} {user} {source} {method} {version} {url} and {statusCode}",
                 "custom type", "custom hostname", "custom application", "custom user", "custom source", "custom method",
                 "custom version", "custom url", 500);
+
+            Console.WriteLine("Wait 5 seconds and press any key to exit.");
+            Console.ReadKey();
         }
     }
 }

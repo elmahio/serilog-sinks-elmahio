@@ -15,81 +15,97 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading;
 using Elmah.Io.Client;
 using Elmah.Io.Client.Models;
-using Serilog.Core;
 using Serilog.Events;
+using Serilog.Sinks.PeriodicBatching;
 
 namespace Serilog.Sinks.ElmahIo
 {
     /// <summary>
     /// Writes log events to the elmah.io service.
     /// </summary>
-    public class ElmahIoSink : ILogEventSink
+    public class ElmahIoSink : PeriodicBatchingSink
     {
-        readonly IFormatProvider _formatProvider;
-        readonly Guid _logId;
+#if DOTNETCORE
+        internal static string _assemblyVersion = "netstandard";
+#else
+        internal static string _assemblyVersion = typeof(ElmahIoSink).Assembly.GetName().Version.ToString();
+#endif
+
+        readonly ElmahIoSinkOptions _options;
         readonly IElmahioAPI _client;
 
         /// <summary>
         /// Construct a sink that saves logs to the specified storage account.
         /// </summary>
-        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        /// <param name="apiKey">An API key from the organization containing the log.</param>
-        /// <param name="logId">The log ID as found on the elmah.io website.</param>
-        public ElmahIoSink(IFormatProvider formatProvider, string apiKey, Guid logId)
+        public ElmahIoSink(ElmahIoSinkOptions options)
+            : base(options.BatchPostingLimit, options.Period)
         {
-            _formatProvider = formatProvider;
-            _logId = logId;
-            _client = ElmahioAPI.Create(apiKey);
+            _options = options;
         }
 
         /// <summary>
         /// Construct a sink that saves logs to the specified logger. The purpose of this
         /// constructor is to re-use an existing client from ELMAH or similar.
         /// </summary>
-        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        /// <param name="client">The client to use.</param>
-        public ElmahIoSink(IFormatProvider formatProvider, IElmahioAPI client)
+        public ElmahIoSink(ElmahIoSinkOptions options, IElmahioAPI client)
+            : this(options)
         {
-            _formatProvider = formatProvider;
             _client = client;
         }
 
         /// <summary>
-        /// Emit the provided log event to the sink.
+        /// Emit a batch of log events, running to completion synchronously.
         /// </summary>
-        /// <param name="logEvent">The log event to write.</param>
-        public void Emit(LogEvent logEvent)
+        /// <param name="events"></param>
+        protected override void EmitBatch(IEnumerable<LogEvent> events)
         {
-            try
-            {
-                var message = new CreateMessage
-                {
-                    Title = logEvent.RenderMessage(_formatProvider),
-                    Severity = LevelToSeverity(logEvent),
-                    DateTime = logEvent.Timestamp.DateTime.ToUniversalTime(),
-                    Detail = logEvent.Exception?.ToString(),
-                    Data = PropertiesToData(logEvent),
-                    Type = Type(logEvent),
-                    Hostname = Hostname(logEvent),
-                    Application = Application(logEvent),
-                    User = User(logEvent),
-                    Source = Source(logEvent),
-                    Method = Method(logEvent),
-                    Version = Version(logEvent),
-                    Url = Url(logEvent),
-                    StatusCode = StatusCode(logEvent),
-                };
+            if (events == null || !events.Any())
+                return;
 
-                _client.Messages.CreateAndNotify(_logId, message);
-            }
-            catch (Exception e)
+            var client = _client;
+            if (_client == null)
             {
-                Debugging.SelfLog.WriteLine("Caught exception while emitting to sink: {0}", e);
-                throw;
+                ElmahioAPI api = new ElmahioAPI(new ApiKeyCredentials(_options.ApiKey), HttpClientHandlerFactory.GetHttpClientHandler());
+                api.HttpClient.Timeout = new TimeSpan(0, 0, 5);
+                api.HttpClient.DefaultRequestHeaders.UserAgent.Clear();
+                api.HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue("Serilog.Sinks.ElmahIo", _assemblyVersion)));
+                client = api;
+            }
+
+            foreach (var logEvent in events)
+            {
+                try
+                {
+                    var message = new CreateMessage
+                    {
+                        Title = logEvent.RenderMessage(_options.FormatProvider),
+                        Severity = LevelToSeverity(logEvent),
+                        DateTime = logEvent.Timestamp.DateTime.ToUniversalTime(),
+                        Detail = logEvent.Exception?.ToString(),
+                        Data = PropertiesToData(logEvent),
+                        Type = Type(logEvent),
+                        Hostname = Hostname(logEvent),
+                        Application = Application(logEvent),
+                        User = User(logEvent),
+                        Source = Source(logEvent),
+                        Method = Method(logEvent),
+                        Version = Version(logEvent),
+                        Url = Url(logEvent),
+                        StatusCode = StatusCode(logEvent),
+                    };
+
+                    client.Messages.CreateAndNotify(_options.LogId, message);
+                }
+                catch (Exception e)
+                {
+                    Debugging.SelfLog.WriteLine("Caught exception while emitting to sink: {0}", e);
+                    throw;
+                }
             }
         }
 
