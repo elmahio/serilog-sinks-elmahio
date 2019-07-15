@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Security.Claims;
 using System.Threading;
 using Elmah.Io.Client;
@@ -31,7 +32,7 @@ namespace Serilog.Sinks.ElmahIo
     public class ElmahIoSink : PeriodicBatchingSink
     {
 #if DOTNETCORE
-        internal static string _assemblyVersion = "netstandard";
+        internal static string _assemblyVersion = typeof(ElmahIoSink).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
 #else
         internal static string _assemblyVersion = typeof(ElmahIoSink).Assembly.GetName().Version.ToString();
 #endif
@@ -104,7 +105,6 @@ namespace Serilog.Sinks.ElmahIo
                 catch (Exception e)
                 {
                     Debugging.SelfLog.WriteLine("Caught exception while emitting to sink: {0}", e);
-                    throw;
                 }
             }
         }
