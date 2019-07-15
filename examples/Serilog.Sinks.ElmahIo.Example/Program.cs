@@ -21,7 +21,7 @@ namespace Serilog.Sinks.ElmahIo.Example
     {
         static void Main(string[] args)
         {
-            var logger =
+            Log.Logger =
                 new LoggerConfiguration()
                     .Enrich.WithProperty("Hello", "World")
                     .Enrich.FromLogContext()
@@ -34,7 +34,7 @@ namespace Serilog.Sinks.ElmahIo.Example
 
             using (LogContext.PushProperty("LogContext property", "with some value"))
             {
-                logger.Error("This is a log message with a {TypeOfProperty} message", "structured");
+                Log.Error("This is a log message with a {TypeOfProperty} message", "structured");
             }
 
             try
@@ -44,15 +44,15 @@ namespace Serilog.Sinks.ElmahIo.Example
             }
             catch (Exception e)
             {
-                logger.Error(e, "Some exception");
+                Log.Error(e, "Some exception");
             }
 
-            logger.Information("A message with {type} {hostname} {application} {user} {source} {method} {version} {url} and {statusCode}",
+            Log.Information("A message with {type} {hostname} {application} {user} {source} {method} {version} {url} and {statusCode}",
                 "custom type", "custom hostname", "custom application", "custom user", "custom source", "custom method",
                 "custom version", "custom url", 500);
 
-            Console.WriteLine("Wait 5 seconds and press any key to exit.");
-            Console.ReadKey();
+            // Make sure to emit any batched messages not already sent to elmah.io.
+            Log.CloseAndFlush();
         }
     }
 }
