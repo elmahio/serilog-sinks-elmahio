@@ -74,7 +74,8 @@ namespace Serilog
         }
 
         /// <summary>
-        /// Adds a sink that writes log events to elmah.io. 
+        /// Adds a sink that writes log events to elmah.io. If not specified through options,
+        /// every level are logged to elmah.io. It is recommended to log warnings and up only.
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
         /// <param name="options"></param>
