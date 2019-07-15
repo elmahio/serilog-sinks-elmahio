@@ -22,7 +22,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
             var clientMock = new Mock<IElmahioAPI>();
             var messagesMock = new Mock<IMessages>();
             clientMock.Setup(x => x.Messages).Returns(messagesMock.Object);
-            var sink = new ElmahIoSink(null, clientMock.Object);
+            var sink = new ElmahIoSink(new ElmahIoSinkOptions(), clientMock.Object);
             CreateMessage loggedMessage = null;
             messagesMock
                 .Setup(x => x.CreateAndNotify(It.IsAny<Guid>(), It.IsAny<CreateMessage>()))
@@ -54,6 +54,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
             );
 
             // Assert
+            sink.Dispose();
             Assert.That(loggedMessage != null);
             Assert.That(loggedMessage.Type, Is.EqualTo("type"));
             Assert.That(loggedMessage.Hostname, Is.EqualTo("hostname"));
@@ -73,11 +74,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
             var clientMock = new Mock<IElmahioAPI>();
             var messagesMock = new Mock<IMessages>();
             clientMock.Setup(x => x.Messages).Returns(messagesMock.Object);
-            var sink = new ElmahIoSink(new ElmahIoSinkOptions
-            {
-                BatchPostingLimit = 1,
-                Period = TimeSpan.FromMilliseconds(1)
-            }, clientMock.Object);
+            var sink = new ElmahIoSink(new ElmahIoSinkOptions(), clientMock.Object);
             CreateMessage loggedMessage = null;
             messagesMock
                 .Setup(x => x.CreateAndNotify(It.IsAny<Guid>(), It.IsAny<CreateMessage>()))
@@ -109,6 +106,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
             );
 
             // Assert
+            sink.Dispose();
             Assert.That(loggedMessage != null);
             Assert.That(loggedMessage.Severity, Is.EqualTo(Severity.Error.ToString()));
             Assert.That(loggedMessage.DateTime, Is.EqualTo(now.DateTime.ToUniversalTime()));
