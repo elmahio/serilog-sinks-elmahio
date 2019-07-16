@@ -14,12 +14,12 @@ namespace Serilog.Sinks.ElmahIo
     public class ElmahIoSinkOptions
     {
         /// <summary>
-        /// 
+        /// An API key able to write messages to elmah.io (enable the Messages - Write permission).
         /// </summary>
         public string ApiKey { get; set; }
 
         /// <summary>
-        /// 
+        /// The ID of the log to store messages from Serilog.
         /// </summary>
         public Guid LogId { get; set; }
 
@@ -49,7 +49,8 @@ namespace Serilog.Sinks.ElmahIo
         public LoggingLevelSwitch LevelSwitch { get; set; }
 
         /// <summary>
-        /// 
+        /// Creates a new options instance. Period will be set to 2 seconds and
+        /// BatchPostingLimit to 50 unless set manually afterwards.
         /// </summary>
         public ElmahIoSinkOptions()
         {
