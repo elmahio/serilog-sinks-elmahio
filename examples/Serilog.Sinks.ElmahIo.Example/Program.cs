@@ -23,7 +23,7 @@ namespace Serilog.Sinks.ElmahIo.Example
         {
             Log.Logger =
                 new LoggerConfiguration()
-                    .Enrich.WithProperty("Hello", "World")
+                    .Enrich.WithProperty("Version", "1.2.3")
                     .Enrich.FromLogContext()
                     .WriteTo.ElmahIo(new ElmahIoSinkOptions
                     {
@@ -32,7 +32,7 @@ namespace Serilog.Sinks.ElmahIo.Example
                     })
                     .CreateLogger();
 
-            using (LogContext.PushProperty("LogContext property", "with some value"))
+            using (LogContext.PushProperty("User", "Arnold Schwarzenegger"))
             {
                 Log.Error("This is a log message with a {TypeOfProperty} message", "structured");
             }
