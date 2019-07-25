@@ -14,6 +14,7 @@
 
 using System;
 using Serilog.Context;
+using Serilog.Events;
 
 namespace Serilog.Sinks.ElmahIo.Example
 {
@@ -25,7 +26,24 @@ namespace Serilog.Sinks.ElmahIo.Example
                 new LoggerConfiguration()
                     .Enrich.WithProperty("Version", "1.2.3")
                     .Enrich.FromLogContext()
-                    .WriteTo.ElmahIo(new ElmahIoSinkOptions("API_KEY", new Guid("LOG_ID")))
+                    .WriteTo.ElmahIo(new ElmahIoSinkOptions("API_KEY", new Guid("LOG_ID"))
+                    {
+                        BatchPostingLimit = 50,
+                        MinimumLogEventLevel = LogEventLevel.Warning,
+                        Period = TimeSpan.FromSeconds(2),
+                        OnMessage = msg =>
+                        {
+                            msg.Data.Add(new Elmah.Io.Client.Models.Item("Hello", "World"));
+                        },
+                        OnFilter = msg =>
+                        {
+                            return msg.StatusCode == 404;
+                        },
+                        OnError = (msg, ex) =>
+                        {
+                            Console.Error.WriteLine(ex.Message);
+                        }
+                    })
                     .CreateLogger();
 
             using (LogContext.PushProperty("User", "Arnold Schwarzenegger"))

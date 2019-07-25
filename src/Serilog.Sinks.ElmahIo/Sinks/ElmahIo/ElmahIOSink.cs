@@ -75,6 +75,14 @@ namespace Serilog.Sinks.ElmahIo
                 api.HttpClient.Timeout = new TimeSpan(0, 0, 5);
                 api.HttpClient.DefaultRequestHeaders.UserAgent.Clear();
                 api.HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue("Serilog.Sinks.ElmahIo", _assemblyVersion)));
+                api.Messages.OnMessage += (sender, args) =>
+                {
+                    _options.OnMessage?.Invoke(args.Message);
+                };
+                api.Messages.OnMessageFail += (sender, args) =>
+                {
+                    _options.OnError?.Invoke(args.Message, args.Error);
+                };
                 client = api;
             }
 
@@ -99,6 +107,11 @@ namespace Serilog.Sinks.ElmahIo
                         Url = Url(logEvent),
                         StatusCode = StatusCode(logEvent),
                     };
+
+                    if (_options.OnFilter != null && _options.OnFilter(message))
+                    {
+                        return;
+                    }
 
                     client.Messages.CreateAndNotify(_options.LogId, message);
                 }

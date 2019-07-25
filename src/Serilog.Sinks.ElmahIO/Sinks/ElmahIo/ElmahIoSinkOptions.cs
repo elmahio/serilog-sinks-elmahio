@@ -1,10 +1,7 @@
-﻿using Serilog.Core;
+﻿using Elmah.Io.Client.Models;
+using Serilog.Core;
 using Serilog.Events;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Serilog.Sinks.ElmahIo
 {
@@ -22,6 +19,21 @@ namespace Serilog.Sinks.ElmahIo
         /// The ID of the log to store messages from Serilog.
         /// </summary>
         public Guid LogId { get; set; }
+
+        /// <summary>
+        /// Callback executed on each log message. Additional properties can be set on the provided message.
+        /// </summary>
+        public Action<CreateMessage> OnMessage { get; set; }
+
+        /// <summary>
+        /// Callback executed when something goes wrong during communication with elmah.io.
+        /// </summary>
+        public Action<CreateMessage, Exception> OnError { get; set; }
+
+        /// <summary>
+        /// Callback used to filter one or more log message. If returning true from the provided func, the log messages will not be logged.
+        /// </summary>
+        public Func<CreateMessage, bool> OnFilter { get; set; }
 
         ///<summary>
         /// Supplies culture-specific formatting information, or null.
