@@ -22,7 +22,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
             var clientMock = new Mock<IElmahioAPI>();
             var messagesMock = new Mock<IMessages>();
             clientMock.Setup(x => x.Messages).Returns(messagesMock.Object);
-            var sink = new ElmahIoSink(new ElmahIoSinkOptions(), clientMock.Object);
+            var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock.Object);
             CreateMessage loggedMessage = null;
             messagesMock
                 .Setup(x => x.CreateAndNotify(It.IsAny<Guid>(), It.IsAny<CreateMessage>()))
@@ -74,7 +74,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
             var clientMock = new Mock<IElmahioAPI>();
             var messagesMock = new Mock<IMessages>();
             clientMock.Setup(x => x.Messages).Returns(messagesMock.Object);
-            var sink = new ElmahIoSink(new ElmahIoSinkOptions(), clientMock.Object);
+            var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock.Object);
             CreateMessage loggedMessage = null;
             messagesMock
                 .Setup(x => x.CreateAndNotify(It.IsAny<Guid>(), It.IsAny<CreateMessage>()))

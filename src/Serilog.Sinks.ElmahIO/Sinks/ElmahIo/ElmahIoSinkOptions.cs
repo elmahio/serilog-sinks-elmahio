@@ -52,8 +52,10 @@ namespace Serilog.Sinks.ElmahIo
         /// Creates a new options instance. Period will be set to 2 seconds and
         /// BatchPostingLimit to 50 unless set manually afterwards.
         /// </summary>
-        public ElmahIoSinkOptions()
+        public ElmahIoSinkOptions(string apiKey, Guid logId)
         {
+            ApiKey = apiKey;
+            LogId = logId;
             Period = TimeSpan.FromSeconds(2);
             BatchPostingLimit = 50;
         }

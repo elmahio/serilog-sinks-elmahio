@@ -25,11 +25,7 @@ namespace Serilog.Sinks.ElmahIo.Example
                 new LoggerConfiguration()
                     .Enrich.WithProperty("Version", "1.2.3")
                     .Enrich.FromLogContext()
-                    .WriteTo.ElmahIo(new ElmahIoSinkOptions
-                    {
-                        ApiKey = "API_KEY",
-                        LogId = new Guid("LOG_ID"),
-                    })
+                    .WriteTo.ElmahIo(new ElmahIoSinkOptions("API_KEY", new Guid("LOG_ID")))
                     .CreateLogger();
 
             using (LogContext.PushProperty("User", "Arnold Schwarzenegger"))

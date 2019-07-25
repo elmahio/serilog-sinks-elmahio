@@ -64,10 +64,8 @@ namespace Serilog
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             IFormatProvider formatProvider = null)
         {
-            return ElmahIo(loggerConfiguration, new ElmahIoSinkOptions
+            return ElmahIo(loggerConfiguration, new ElmahIoSinkOptions(apiKey, logId)
             {
-                ApiKey = apiKey,
-                LogId = logId,
                 MinimumLogEventLevel = restrictedToMinimumLevel,
                 FormatProvider = formatProvider,
             });
