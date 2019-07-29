@@ -35,7 +35,7 @@ namespace Serilog
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        [Obsolete("Use the overload accepting ElmahIoSinksOptions")]
+        [Obsolete("Use the overload accepting ElmahIoSinkOptions")]
         public static LoggerConfiguration ElmahIo(
             this LoggerSinkConfiguration loggerConfiguration,
             string apiKey,
@@ -56,7 +56,7 @@ namespace Serilog
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        [Obsolete("Use the overload accepting ElmahIoSinksOptions")]
+        [Obsolete("Use the overload accepting ElmahIoSinkOptions")]
         public static LoggerConfiguration ElmahIo(
             this LoggerSinkConfiguration loggerConfiguration,
             string apiKey,
