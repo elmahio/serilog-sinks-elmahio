@@ -86,39 +86,43 @@ namespace Serilog.Sinks.ElmahIo
                 client = api;
             }
 
+            var messages = new List<CreateMessage>();
+
             foreach (var logEvent in events)
             {
-                try
+                var message = new CreateMessage
                 {
-                    var message = new CreateMessage
-                    {
-                        Title = logEvent.RenderMessage(_options.FormatProvider),
-                        Severity = LevelToSeverity(logEvent),
-                        DateTime = logEvent.Timestamp.DateTime.ToUniversalTime(),
-                        Detail = logEvent.Exception?.ToString(),
-                        Data = PropertiesToData(logEvent),
-                        Type = Type(logEvent),
-                        Hostname = Hostname(logEvent),
-                        Application = Application(logEvent),
-                        User = User(logEvent),
-                        Source = Source(logEvent),
-                        Method = Method(logEvent),
-                        Version = Version(logEvent),
-                        Url = Url(logEvent),
-                        StatusCode = StatusCode(logEvent),
-                    };
+                    Title = logEvent.RenderMessage(_options.FormatProvider),
+                    Severity = LevelToSeverity(logEvent),
+                    DateTime = logEvent.Timestamp.DateTime.ToUniversalTime(),
+                    Detail = logEvent.Exception?.ToString(),
+                    Data = PropertiesToData(logEvent),
+                    Type = Type(logEvent),
+                    Hostname = Hostname(logEvent),
+                    Application = Application(logEvent),
+                    User = User(logEvent),
+                    Source = Source(logEvent),
+                    Method = Method(logEvent),
+                    Version = Version(logEvent),
+                    Url = Url(logEvent),
+                    StatusCode = StatusCode(logEvent),
+                };
 
-                    if (_options.OnFilter != null && _options.OnFilter(message))
-                    {
-                        return;
-                    }
-
-                    client.Messages.CreateAndNotify(_options.LogId, message);
-                }
-                catch (Exception e)
+                if (_options.OnFilter != null && _options.OnFilter(message))
                 {
-                    Debugging.SelfLog.WriteLine("Caught exception while emitting to sink: {0}", e);
+                    continue;
                 }
+
+                messages.Add(message);
+            }
+
+            try
+            {
+                client.Messages.CreateBulkAndNotify(_options.LogId, messages);
+            }
+            catch (Exception e)
+            {
+                Debugging.SelfLog.WriteLine("Caught exception while emitting to sink: {0}", e);
             }
         }
 

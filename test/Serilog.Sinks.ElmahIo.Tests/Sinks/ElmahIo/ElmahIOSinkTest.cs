@@ -23,12 +23,12 @@ namespace Serilog.Sinks.ElmahIo.Tests
             var messagesMock = new Mock<IMessages>();
             clientMock.Setup(x => x.Messages).Returns(messagesMock.Object);
             var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock.Object);
-            CreateMessage loggedMessage = null;
+            IList<CreateMessage> loggedMessages = null;
             messagesMock
-                .Setup(x => x.CreateAndNotify(It.IsAny<Guid>(), It.IsAny<CreateMessage>()))
-                .Callback<Guid, CreateMessage>((logId, msg) =>
+                .Setup(x => x.CreateBulkAndNotify(It.IsAny<Guid>(), It.IsAny<IList<CreateMessage>>()))
+                .Callback<Guid, IList<CreateMessage>>((logId, msg) =>
                 {
-                    loggedMessage = msg;
+                    loggedMessages = msg;
                 });
             var now = DateTimeOffset.Now;
 
@@ -55,7 +55,9 @@ namespace Serilog.Sinks.ElmahIo.Tests
 
             // Assert
             sink.Dispose();
-            Assert.That(loggedMessage != null);
+            Assert.That(loggedMessages != null);
+            Assert.That(loggedMessages.Count, Is.EqualTo(1));
+            var loggedMessage = loggedMessages.First();
             Assert.That(loggedMessage.Type, Is.EqualTo("type"));
             Assert.That(loggedMessage.Hostname, Is.EqualTo("hostname"));
             Assert.That(loggedMessage.Application, Is.EqualTo("application"));
@@ -75,12 +77,12 @@ namespace Serilog.Sinks.ElmahIo.Tests
             var messagesMock = new Mock<IMessages>();
             clientMock.Setup(x => x.Messages).Returns(messagesMock.Object);
             var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock.Object);
-            CreateMessage loggedMessage = null;
+            IList<CreateMessage> loggedMessages = null;
             messagesMock
-                .Setup(x => x.CreateAndNotify(It.IsAny<Guid>(), It.IsAny<CreateMessage>()))
-                .Callback<Guid, CreateMessage>((logId, msg) =>
+                .Setup(x => x.CreateBulkAndNotify(It.IsAny<Guid>(), It.IsAny<IList<CreateMessage>>()))
+                .Callback<Guid, IList<CreateMessage>>((logId, msg) =>
                 {
-                    loggedMessage = msg;
+                    loggedMessages = msg;
                 });
             var now = DateTimeOffset.Now;
             var exception = Exception();
@@ -107,7 +109,9 @@ namespace Serilog.Sinks.ElmahIo.Tests
 
             // Assert
             sink.Dispose();
-            Assert.That(loggedMessage != null);
+            Assert.That(loggedMessages != null);
+            Assert.That(loggedMessages.Count, Is.EqualTo(1));
+            var loggedMessage = loggedMessages.First();
             Assert.That(loggedMessage.Severity, Is.EqualTo(Severity.Error.ToString()));
             Assert.That(loggedMessage.DateTime, Is.EqualTo(now.DateTime.ToUniversalTime()));
             Assert.That(loggedMessage.Detail, Is.EqualTo(exception.ToString()));
