@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <VersionPrefix>3.3.0</VersionPrefix>
+    <VersionPrefix>3.3.1</VersionPrefix>
     <Authors>Michiel van Oudheusden, elmah.io, Serilog Contributors</Authors>
     <TargetFrameworks>net45;netstandard1.3</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -23,7 +23,7 @@
   <ItemGroup>
     <PackageReference Include="Serilog" Version="2.8.0" />
     <PackageReference Include="Serilog.Sinks.PeriodicBatching" Version="2.2.0" />
-    <PackageReference Include="elmah.io.client" Version="[3.5.65-pre,4)" />
+    <PackageReference Include="elmah.io.client" Version="[3.5.68,4)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
