@@ -29,7 +29,7 @@ namespace Serilog.Sinks.ElmahIo.Example
                     .WriteTo.ElmahIo(new ElmahIoSinkOptions("API_KEY", new Guid("LOG_ID"))
                     {
                         BatchPostingLimit = 50,
-                        MinimumLogEventLevel = LogEventLevel.Warning,
+                        MinimumLogEventLevel = LogEventLevel.Information,
                         Period = TimeSpan.FromSeconds(2),
                         OnMessage = msg =>
                         {
@@ -45,6 +45,8 @@ namespace Serilog.Sinks.ElmahIo.Example
                         }
                     })
                     .CreateLogger();
+
+            Log.Information("First log message from Serilog");
 
             using (LogContext.PushProperty("User", "Arnold Schwarzenegger"))
             {

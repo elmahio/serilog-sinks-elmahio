@@ -19,6 +19,7 @@ using System.Net.Http.Headers;
 using System.Reflection;
 using System.Security.Claims;
 using System.Threading;
+using System.Threading.Tasks;
 using Elmah.Io.Client;
 using Elmah.Io.Client.Models;
 using Serilog.Events;
@@ -59,11 +60,8 @@ namespace Serilog.Sinks.ElmahIo
             _client = client;
         }
 
-        /// <summary>
-        /// Emit a batch of log events, running to completion synchronously.
-        /// </summary>
-        /// <param name="events"></param>
-        protected override void EmitBatch(IEnumerable<LogEvent> events)
+        /// <inheritdoc />
+        protected override async Task EmitBatchAsync(IEnumerable<LogEvent> events)
         {
             if (events == null || !events.Any())
                 return;
@@ -93,6 +91,7 @@ namespace Serilog.Sinks.ElmahIo
                 var message = new CreateMessage
                 {
                     Title = logEvent.RenderMessage(_options.FormatProvider),
+                    TitleTemplate = logEvent.MessageTemplate?.Text,
                     Severity = LevelToSeverity(logEvent),
                     DateTime = logEvent.Timestamp.DateTime.ToUniversalTime(),
                     Detail = logEvent.Exception?.ToString(),
@@ -118,7 +117,10 @@ namespace Serilog.Sinks.ElmahIo
 
             try
             {
-                client.Messages.CreateBulkAndNotify(_options.LogId, messages);
+                await client
+                    .Messages
+                    .CreateBulkAndNotifyAsync(_options.LogId, messages)
+                    .ConfigureAwait(false);
             }
             catch (Exception e)
             {
