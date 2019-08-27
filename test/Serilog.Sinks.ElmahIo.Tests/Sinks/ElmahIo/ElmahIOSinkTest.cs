@@ -25,7 +25,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
             var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock.Object);
             IList<CreateMessage> loggedMessages = null;
             messagesMock
-                .Setup(x => x.CreateBulkAndNotify(It.IsAny<Guid>(), It.IsAny<IList<CreateMessage>>()))
+                .Setup(x => x.CreateBulkAndNotifyAsync(It.IsAny<Guid>(), It.IsAny<IList<CreateMessage>>()))
                 .Callback<Guid, IList<CreateMessage>>((logId, msg) =>
                 {
                     loggedMessages = msg;
@@ -79,7 +79,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
             var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock.Object);
             IList<CreateMessage> loggedMessages = null;
             messagesMock
-                .Setup(x => x.CreateBulkAndNotify(It.IsAny<Guid>(), It.IsAny<IList<CreateMessage>>()))
+                .Setup(x => x.CreateBulkAndNotifyAsync(It.IsAny<Guid>(), It.IsAny<IList<CreateMessage>>()))
                 .Callback<Guid, IList<CreateMessage>>((logId, msg) =>
                 {
                     loggedMessages = msg;
