@@ -8,7 +8,7 @@ To configure the elmah.io sink, call the `ElmahIo` method as part of your log co
 
 ```csharp
 var log = new LoggerConfiguration()
-    .WriteTo.ElmahIo("{your api key}", new Guid("{your log id}"))
+    .WriteTo.ElmahIo(new ElmahIoSinkOptions("API_KEY", new Guid("LOG_ID")))
     .CreateLogger();
 ```
 
