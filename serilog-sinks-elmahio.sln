@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29209.62
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5AA6E776-1B1C-407D-83A6-91DE4B9A4F7B}"
 EndProject
@@ -14,6 +14,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.ElmahIo.Example", "examples\Serilog.Sinks.ElmahIo.Example\Serilog.Sinks.ElmahIo.Example.csproj", "{3E1F69F1-DAA6-4385-A134-8776E6B154E8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.ElmahIo.Tests", "test\Serilog.Sinks.ElmahIo.Tests\Serilog.Sinks.ElmahIo.Tests.csproj", "{A2F260FD-3EFD-4135-919F-594FF7449575}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{341F4A07-F421-40D5-9631-D82A99D99688}"
+	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

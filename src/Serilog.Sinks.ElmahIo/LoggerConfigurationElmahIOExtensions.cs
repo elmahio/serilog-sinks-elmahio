@@ -76,7 +76,7 @@ namespace Serilog
         /// every level are logged to elmah.io. It is recommended to log warnings and up only.
         /// </summary>
         /// <param name="loggerConfiguration">The logger configuration.</param>
-        /// <param name="options"></param>
+        /// <param name="options">The options (like API key and log ID) to use when setting up the sink.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
         public static LoggerConfiguration ElmahIo(
