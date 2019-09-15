@@ -31,6 +31,14 @@ namespace Serilog.Sinks.ElmahIo.Tests
                     loggedMessages = msg;
                 });
             var now = DateTimeOffset.Now;
+            var serverVariables = new Dictionary<ScalarValue, LogEventPropertyValue>();
+            serverVariables.Add(new ScalarValue("serverVariableKey"), new ScalarValue("serverVariableValue"));
+            var cookies = new Dictionary<ScalarValue, LogEventPropertyValue>();
+            cookies.Add(new ScalarValue("cookiesKey"), new ScalarValue("cookiesValue"));
+            var form = new Dictionary<ScalarValue, LogEventPropertyValue>();
+            form.Add(new ScalarValue("formKey"), new ScalarValue("formValue"));
+            var queryString = new Dictionary<ScalarValue, LogEventPropertyValue>();
+            queryString.Add(new ScalarValue("queryStringKey"), new ScalarValue("queryStringValue"));
 
             // Act
             sink.Emit(
@@ -49,6 +57,10 @@ namespace Serilog.Sinks.ElmahIo.Tests
                         new LogEventProperty("version", new ScalarValue("version")),
                         new LogEventProperty("url", new ScalarValue("url")),
                         new LogEventProperty("statusCode", new ScalarValue(400)),
+                        new LogEventProperty("serverVariables", new DictionaryValue(serverVariables)),
+                        new LogEventProperty("cookies", new DictionaryValue(cookies)),
+                        new LogEventProperty("form", new DictionaryValue(form)),
+                        new LogEventProperty("queryString", new DictionaryValue(queryString)),
                     }
                 )
             );
@@ -67,6 +79,10 @@ namespace Serilog.Sinks.ElmahIo.Tests
             Assert.That(loggedMessage.Version, Is.EqualTo("version"));
             Assert.That(loggedMessage.Url, Is.EqualTo("url"));
             Assert.That(loggedMessage.StatusCode, Is.EqualTo(400));
+            Assert.That(loggedMessage.ServerVariables.Any(sv => sv.Key == "serverVariableKey" && sv.Value == "serverVariableValue"));
+            Assert.That(loggedMessage.Cookies.Any(sv => sv.Key == "cookiesKey" && sv.Value == "cookiesValue"));
+            Assert.That(loggedMessage.Form.Any(sv => sv.Key == "formKey" && sv.Value == "formValue"));
+            Assert.That(loggedMessage.QueryString.Any(sv => sv.Key == "queryStringKey" && sv.Value == "queryStringValue"));
         }
 
         [Test]

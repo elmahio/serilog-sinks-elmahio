@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using Serilog.Context;
 using Serilog.Events;
 
@@ -63,9 +64,20 @@ namespace Serilog.Sinks.ElmahIo.Example
                 Log.Error(e, "Some exception");
             }
 
-            Log.Information("A message with {type} {hostname} {application} {user} {source} {method} {version} {url} and {statusCode}",
-                "custom type", "custom hostname", "custom application", "custom user", "custom source", "custom method",
-                "custom version", "custom url", 500);
+            Log.Information("A message with {type} {hostname} {application} {user} {source} {method} {version} {url}, {statusCode}, {serverVariables}, {cookies}, {form} and {queryString}",
+                "custom type",
+                "custom hostname",
+                "custom application",
+                "custom user",
+                "custom source",
+                "custom method",
+                "custom version",
+                "custom url",
+                500,
+                new Dictionary<string, string> { { "REMOTE_ADDR", "1.1.1.1" } },
+                new Dictionary<string, string> { { "_ga", "GA1.3.1162527071.1564749318" } },
+                new Dictionary<string, string> { { "username", "Arnold" } },
+                new Dictionary<string, string> { { "id", "42" } });
 
             // Make sure to emit any batched messages not already sent to elmah.io.
             Log.CloseAndFlush();

@@ -105,6 +105,10 @@ namespace Serilog.Sinks.ElmahIo
                     Version = Version(logEvent),
                     Url = Url(logEvent),
                     StatusCode = StatusCode(logEvent),
+                    ServerVariables = ServerVariables(logEvent),
+                    Cookies = Cookies(logEvent),
+                    Form = Form(logEvent),
+                    QueryString = QueryString(logEvent),
                 };
 
                 if (_options.OnFilter != null && _options.OnFilter(message))
@@ -126,6 +130,26 @@ namespace Serilog.Sinks.ElmahIo
             {
                 Debugging.SelfLog.WriteLine("Caught exception while emitting to sink: {0}", e);
             }
+        }
+
+        private IList<Item> ServerVariables(LogEvent logEvent)
+        {
+            return Items(logEvent, "servervariables");
+        }
+
+        private IList<Item> Cookies(LogEvent logEvent)
+        {
+            return Items(logEvent, "cookies");
+        }
+
+        private IList<Item> Form(LogEvent logEvent)
+        {
+            return Items(logEvent, "form");
+        }
+
+        private IList<Item> QueryString(LogEvent logEvent)
+        {
+            return Items(logEvent, "querystring");
         }
 
         private int? StatusCode(LogEvent logEvent)
@@ -277,6 +301,20 @@ namespace Serilog.Sinks.ElmahIo
             var property = logEvent.Properties.First(prop => prop.Key.ToLower().Equals(name.ToLower()));
             var properties = Properties(property);
             return string.Join(", ", properties.Select(p => p.Value));
+        }
+
+        private IList<Item> Items(LogEvent logEvent, string keyName)
+        {
+            if (logEvent == null || logEvent.Properties == null || !logEvent.Properties.Any()) return null;
+            if (!logEvent.Properties.Keys.Any(key => key.ToLower().Equals(keyName))) return null;
+
+            var property = logEvent.Properties.First(prop => prop.Key.ToLower().Equals(keyName));
+            if (!(property.Value is DictionaryValue dictionaryValue)) return null;
+
+            return dictionaryValue
+                .Elements
+                .Select(element => element.ToItem())
+                .ToList();
         }
     }
 }
