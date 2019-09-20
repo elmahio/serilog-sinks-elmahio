@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore;
+﻿using System;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using System;
 
-namespace Serilog.Sinks.ElmahIo.AspNetCore
+namespace Serilog.Sinks.ElmahIo.AspNetCore22
 {
     public class Program
     {

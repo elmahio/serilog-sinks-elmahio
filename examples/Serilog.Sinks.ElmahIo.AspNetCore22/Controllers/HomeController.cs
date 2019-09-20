@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Serilog.Sinks.ElmahIo.AspNetCore.Models;
+using Serilog.Sinks.ElmahIo.AspNetCore22.Models;
 
-namespace Serilog.Sinks.ElmahIo.AspNetCore.Controllers
+namespace Serilog.Sinks.ElmahIo.AspNetCore22.Controllers
 {
     public class HomeController : Controller
     {
@@ -20,7 +16,7 @@ namespace Serilog.Sinks.ElmahIo.AspNetCore.Controllers
 
         public IActionResult Index()
         {
-            logger.LogInformation("Request for frontpage");
+            logger.LogWarning("Request to the frontpage");
             return View();
         }
 

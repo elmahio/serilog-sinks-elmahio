@@ -1,6 +1,6 @@
 using System;
 
-namespace Serilog.Sinks.ElmahIo.AspNetCore.Models
+namespace Serilog.Sinks.ElmahIo.AspNetCore22.Models
 {
     public class ErrorViewModel
     {
