@@ -69,9 +69,8 @@ namespace Serilog.Sinks.ElmahIo
             var client = _client;
             if (_client == null)
             {
-                ElmahioAPI api = new ElmahioAPI(new ApiKeyCredentials(_options.ApiKey), HttpClientHandlerFactory.GetHttpClientHandler());
-                api.HttpClient.Timeout = new TimeSpan(0, 0, 5);
-                api.HttpClient.DefaultRequestHeaders.UserAgent.Clear();
+                ElmahioAPI api = (ElmahioAPI)ElmahioAPI.Create(_options.ApiKey);
+                api.HttpClient.Timeout = new TimeSpan(0, 0, 30);
                 api.HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue("Serilog.Sinks.ElmahIo", _assemblyVersion)));
                 api.Messages.OnMessage += (sender, args) =>
                 {
