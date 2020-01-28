@@ -23,7 +23,7 @@
   <ItemGroup>
     <PackageReference Include="Serilog" Version="2.8.0" />
     <PackageReference Include="Serilog.Sinks.PeriodicBatching" Version="2.2.0" />
-    <PackageReference Include="elmah.io.client" Version="[3.6.73,4)" />
+    <PackageReference Include="Elmah.Io.Client" Version="[3.7.79,4)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
