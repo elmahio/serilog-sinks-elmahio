@@ -11,7 +11,7 @@
     <PackageId>Serilog.Sinks.ElmahIo</PackageId>
     <PackageTags>serilog;logging;elmah;elmah.io;error</PackageTags>
     <PackageIconUrl>http://serilog.net/images/serilog-sink-nuget.png</PackageIconUrl>
-    <PackageProjectUrl>https://github.com/serilog/serilog-sinks-elmahio</PackageProjectUrl>
+    <PackageProjectUrl>http://serilog.net</PackageProjectUrl>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/serilog/serilog-sinks-elmahio</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
