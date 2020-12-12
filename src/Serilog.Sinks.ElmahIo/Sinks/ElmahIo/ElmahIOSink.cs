@@ -220,9 +220,7 @@ namespace Serilog.Sinks.ElmahIo
             var data = new List<Item>();
             if (logEvent.Exception != null)
             {
-                data.AddRange(
-                    logEvent.Exception.Data.Keys.Cast<object>()
-                        .Select(key => new Item { Key = key.ToString(), Value = logEvent.Exception.Data[key].ToString() }));
+                data.AddRange(logEvent.Exception.ToDataList());
             }
 
             data.AddRange(logEvent.Properties.SelectMany(p => Properties(p)));
