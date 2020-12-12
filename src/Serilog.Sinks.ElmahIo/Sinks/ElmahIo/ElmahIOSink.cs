@@ -293,9 +293,9 @@ namespace Serilog.Sinks.ElmahIo
         static string String(LogEvent logEvent, string name)
         {
             if (logEvent == null || logEvent.Properties == null || !logEvent.Properties.Any()) return null;
-            if (!logEvent.Properties.Keys.Any(key => key.ToLower().Equals(name.ToLower()))) return null;
+            if (!logEvent.Properties.Keys.Any(key => key.Equals(name, StringComparison.OrdinalIgnoreCase))) return null;
 
-            var property = logEvent.Properties.First(prop => prop.Key.ToLower().Equals(name.ToLower()));
+            var property = logEvent.Properties.First(prop => prop.Key.Equals(name, StringComparison.OrdinalIgnoreCase));
             var properties = Properties(property);
             return string.Join(", ", properties.Select(p => p.Value));
         }
@@ -303,9 +303,9 @@ namespace Serilog.Sinks.ElmahIo
         private IList<Item> Items(LogEvent logEvent, string keyName)
         {
             if (logEvent == null || logEvent.Properties == null || !logEvent.Properties.Any()) return null;
-            if (!logEvent.Properties.Keys.Any(key => key.ToLower().Equals(keyName))) return null;
+            if (!logEvent.Properties.Keys.Any(key => key.Equals(keyName, StringComparison.OrdinalIgnoreCase))) return null;
 
-            var property = logEvent.Properties.First(prop => prop.Key.ToLower().Equals(keyName));
+            var property = logEvent.Properties.First(prop => prop.Key.Equals(keyName, StringComparison.OrdinalIgnoreCase));
             if (!(property.Value is DictionaryValue dictionaryValue)) return null;
 
             return dictionaryValue
