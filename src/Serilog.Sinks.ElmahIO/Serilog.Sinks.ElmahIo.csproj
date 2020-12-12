@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <VersionPrefix>3.5.0</VersionPrefix>
+    <Description>Serilog sink that writes to elmah.io</Description>
+    <VersionPrefix>3.6.0-pre</VersionPrefix>
     <Authors>Michiel van Oudheusden, elmah.io, Serilog Contributors</Authors>
     <TargetFrameworks>net45;netstandard1.3</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
