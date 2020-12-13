@@ -10,7 +10,7 @@
     <AssemblyName>Serilog.Sinks.ElmahIo</AssemblyName>
     <PackageId>Serilog.Sinks.ElmahIo</PackageId>
     <PackageTags>serilog;logging;elmah;elmah.io;error</PackageTags>
-    <PackageIconUrl>http://serilog.net/images/serilog-sink-nuget.png</PackageIconUrl>
+    <PackageIcon>serilog-sink-nuget.png</PackageIcon>
     <PackageProjectUrl>http://serilog.net</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/serilog/serilog-sinks-elmahio</RepositoryUrl>
@@ -26,7 +26,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,5 +47,9 @@
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
      <DefineConstants>$(DefineConstants);DOTNETCORE;NO_SERIALIZATION</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="images\serilog-sink-nuget.png" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 
 </Project>
