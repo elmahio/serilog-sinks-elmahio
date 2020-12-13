@@ -292,7 +292,7 @@ namespace Serilog.Sinks.ElmahIo
 
         static string String(LogEvent logEvent, string name)
         {
-            if (logEvent == null || logEvent.Properties == null || !logEvent.Properties.Any()) return null;
+            if (logEvent == null || logEvent.Properties == null || logEvent.Properties.Count == 0) return null;
             if (!logEvent.Properties.Keys.Any(key => key.Equals(name, StringComparison.OrdinalIgnoreCase))) return null;
 
             var property = logEvent.Properties.First(prop => prop.Key.Equals(name, StringComparison.OrdinalIgnoreCase));
@@ -302,7 +302,7 @@ namespace Serilog.Sinks.ElmahIo
 
         private IList<Item> Items(LogEvent logEvent, string keyName)
         {
-            if (logEvent == null || logEvent.Properties == null || !logEvent.Properties.Any()) return null;
+            if (logEvent == null || logEvent.Properties == null || logEvent.Properties.Count == 0) return null;
             if (!logEvent.Properties.Keys.Any(key => key.Equals(keyName, StringComparison.OrdinalIgnoreCase))) return null;
 
             var property = logEvent.Properties.First(prop => prop.Key.Equals(keyName, StringComparison.OrdinalIgnoreCase));
