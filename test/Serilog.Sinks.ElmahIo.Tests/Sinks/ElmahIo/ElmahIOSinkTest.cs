@@ -53,6 +53,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
                         new LogEventProperty("version", new ScalarValue("version")),
                         new LogEventProperty("url", new ScalarValue("url")),
                         new LogEventProperty("statusCode", new ScalarValue(400)),
+                        new LogEventProperty("correlationId", new ScalarValue("correlationId")),
                         new LogEventProperty("serverVariables", new DictionaryValue(serverVariables)),
                         new LogEventProperty("cookies", new DictionaryValue(cookies)),
                         new LogEventProperty("form", new DictionaryValue(form)),
@@ -75,6 +76,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
             Assert.That(loggedMessage.Version, Is.EqualTo("version"));
             Assert.That(loggedMessage.Url, Is.EqualTo("url"));
             Assert.That(loggedMessage.StatusCode, Is.EqualTo(400));
+            Assert.That(loggedMessage.CorrelationId, Is.EqualTo("correlationId"));
             Assert.That(loggedMessage.ServerVariables.Any(sv => sv.Key == "serverVariableKey" && sv.Value == "serverVariableValue"));
             Assert.That(loggedMessage.Cookies.Any(sv => sv.Key == "cookiesKey" && sv.Value == "cookiesValue"));
             Assert.That(loggedMessage.Form.Any(sv => sv.Key == "formKey" && sv.Value == "formValue"));

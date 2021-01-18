@@ -104,6 +104,7 @@ namespace Serilog.Sinks.ElmahIo
                     Version = Version(logEvent),
                     Url = Url(logEvent),
                     StatusCode = StatusCode(logEvent),
+                    CorrelationId = CorrelationId(logEvent),
                     ServerVariables = ServerVariables(logEvent),
                     Cookies = Cookies(logEvent),
                     Form = Form(logEvent),
@@ -129,6 +130,11 @@ namespace Serilog.Sinks.ElmahIo
             {
                 Debugging.SelfLog.WriteLine("Caught exception while emitting to sink: {0}", e);
             }
+        }
+
+        private string CorrelationId(LogEvent logEvent)
+        {
+            return String(logEvent, "correlationid");
         }
 
         private IList<Item> ServerVariables(LogEvent logEvent)
