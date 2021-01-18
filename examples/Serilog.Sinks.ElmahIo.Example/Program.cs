@@ -29,21 +29,30 @@ namespace Serilog.Sinks.ElmahIo.Example
                     .Enrich.FromLogContext()
                     .WriteTo.ElmahIo(new ElmahIoSinkOptions("API_KEY", new Guid("LOG_ID"))
                     {
-                        BatchPostingLimit = 50,
+                        // As default, everything is logged. You can set a minimum log level using the following code:
                         MinimumLogEventLevel = LogEventLevel.Information,
-                        Period = TimeSpan.FromSeconds(2),
-                        OnMessage = msg =>
-                        {
-                            msg.Data.Add(new Elmah.Io.Client.Models.Item("Hello", "World"));
-                        },
-                        OnFilter = msg =>
-                        {
-                            return msg.StatusCode == 404;
-                        },
-                        OnError = (msg, ex) =>
-                        {
-                            Console.Error.WriteLine(ex.Message);
-                        }
+
+                        // The elmah.io sink bulk upload log messages. To change the default behavior, change one or both of the following properties:
+                        //BatchPostingLimit = 50,
+                        //Period = TimeSpan.FromSeconds(2),
+
+                        // To decorate all log messages with a general variable or to get a callback every time a message is logged, implement the OnMessage action:
+                        //OnMessage = msg =>
+                        //{
+                        //    msg.Data.Add(new Elmah.Io.Client.Models.Item("Hello", "World"));
+                        //},
+
+                        // To create client side filtering of what not to log, implement the OnFilter action:
+                        //OnFilter = msg =>
+                        //{
+                        //    return msg.StatusCode == 404;
+                        //},
+
+                        // To get a callback if logging to elmah.io fail, implement the OnError action:
+                        //OnError = (msg, ex) =>
+                        //{
+                        //    Console.Error.WriteLine(ex.Message);
+                        //}
                     })
                     .CreateLogger();
 
