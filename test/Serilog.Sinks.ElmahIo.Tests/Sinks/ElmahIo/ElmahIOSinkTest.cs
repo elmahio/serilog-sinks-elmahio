@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading;
 using Elmah.Io.Client;
 using Elmah.Io.Client.Models;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Serilog.Events;
 using Serilog.Parsing;
@@ -19,17 +18,14 @@ namespace Serilog.Sinks.ElmahIo.Tests
         public void CanEmitCustomFields()
         {
             // Arrange
-            var clientMock = new Mock<IElmahioAPI>();
-            var messagesMock = new Mock<IMessages>();
-            clientMock.Setup(x => x.Messages).Returns(messagesMock.Object);
-            var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock.Object);
+            var clientMock = Substitute.For<IElmahioAPI>();
+            var messagesMock = Substitute.For<IMessages>();
+            clientMock.Messages.Returns(messagesMock);
+            var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock);
             IList<CreateMessage> loggedMessages = null;
             messagesMock
-                .Setup(x => x.CreateBulkAndNotifyAsync(It.IsAny<Guid>(), It.IsAny<IList<CreateMessage>>()))
-                .Callback<Guid, IList<CreateMessage>>((logId, msg) =>
-                {
-                    loggedMessages = msg;
-                });
+                .When(x => x.CreateBulkAndNotifyAsync(Arg.Any<Guid>(), Arg.Any<IList<CreateMessage>>()))
+                .Do(x => loggedMessages = x.Arg<IList<CreateMessage>>());
             var now = DateTimeOffset.Now;
             var serverVariables = new Dictionary<ScalarValue, LogEventPropertyValue>();
             serverVariables.Add(new ScalarValue("serverVariableKey"), new ScalarValue("serverVariableValue"));
@@ -89,25 +85,22 @@ namespace Serilog.Sinks.ElmahIo.Tests
         public void CanEmit()
         {
             // Arrange
-            var clientMock = new Mock<IElmahioAPI>();
-            var messagesMock = new Mock<IMessages>();
-            clientMock.Setup(x => x.Messages).Returns(messagesMock.Object);
-            var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock.Object);
+            var clientMock = Substitute.For<IElmahioAPI>();
+            var messagesMock = Substitute.For<IMessages>();
+            clientMock.Messages.Returns(messagesMock);
+            var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock);
             IList<CreateMessage> loggedMessages = null;
             messagesMock
-                .Setup(x => x.CreateBulkAndNotifyAsync(It.IsAny<Guid>(), It.IsAny<IList<CreateMessage>>()))
-                .Callback<Guid, IList<CreateMessage>>((logId, msg) =>
-                {
-                    loggedMessages = msg;
-                });
+                .When(x => x.CreateBulkAndNotifyAsync(Arg.Any<Guid>(), Arg.Any<IList<CreateMessage>>()))
+                .Do(x => loggedMessages = x.Arg<IList<CreateMessage>>());
             var now = DateTimeOffset.Now;
             var exception = Exception();
 #if !DOTNETCORE
-            var principalMock = new Mock<IPrincipal>();
-            var identityMock = new Mock<IIdentity>();
-            identityMock.Setup(x => x.Name).Returns("User");
-            principalMock.Setup(x => x.Identity).Returns(identityMock.Object);
-            Thread.CurrentPrincipal = principalMock.Object;
+            var principalMock = Substitute.For<IPrincipal>();
+            var identityMock = Substitute.For<IIdentity>();
+            identityMock.Name.Returns("User");
+            principalMock.Identity.Returns(identityMock);
+            Thread.CurrentPrincipal = principalMock;
 #endif
 
             // Act
