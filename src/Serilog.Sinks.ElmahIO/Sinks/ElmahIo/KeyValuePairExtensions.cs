@@ -1,4 +1,4 @@
-﻿using Elmah.Io.Client.Models;
+﻿using Elmah.Io.Client;
 using System.Collections.Generic;
 
 namespace Serilog.Sinks.ElmahIo

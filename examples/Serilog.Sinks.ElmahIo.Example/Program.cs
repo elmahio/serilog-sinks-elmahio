@@ -39,7 +39,7 @@ namespace Serilog.Sinks.ElmahIo.Example
                         // To decorate all log messages with a general variable or to get a callback every time a message is logged, implement the OnMessage action:
                         //OnMessage = msg =>
                         //{
-                        //    msg.Data.Add(new Elmah.Io.Client.Models.Item("Hello", "World"));
+                        //    msg.Data.Add(new Elmah.Io.Client.Item("Hello", "World"));
                         //},
 
                         // To create client side filtering of what not to log, implement the OnFilter action:

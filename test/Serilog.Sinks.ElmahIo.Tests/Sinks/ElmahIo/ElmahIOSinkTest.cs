@@ -4,7 +4,6 @@ using System.Linq;
 using System.Security.Principal;
 using System.Threading;
 using Elmah.Io.Client;
-using Elmah.Io.Client.Models;
 using NSubstitute;
 using NUnit.Framework;
 using Serilog.Events;
@@ -19,7 +18,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
         {
             // Arrange
             var clientMock = Substitute.For<IElmahioAPI>();
-            var messagesMock = Substitute.For<IMessages>();
+            var messagesMock = Substitute.For<IMessagesClient>();
             clientMock.Messages.Returns(messagesMock);
             var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock);
             IList<CreateMessage> loggedMessages = null;
@@ -88,7 +87,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
         {
             // Arrange
             var clientMock = Substitute.For<IElmahioAPI>();
-            var messagesMock = Substitute.For<IMessages>();
+            var messagesMock = Substitute.For<IMessagesClient>();
             clientMock.Messages.Returns(messagesMock);
             var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock);
             IList<CreateMessage> loggedMessages = null;
@@ -124,7 +123,8 @@ namespace Serilog.Sinks.ElmahIo.Tests
             Assert.That(loggedMessages.Count, Is.EqualTo(1));
             var loggedMessage = loggedMessages.First();
             Assert.That(loggedMessage.Severity, Is.EqualTo(Severity.Error.ToString()));
-            Assert.That(loggedMessage.DateTime, Is.EqualTo(now.DateTime.ToUniversalTime()));
+            Assert.That(loggedMessage.DateTime.HasValue);
+            Assert.That(loggedMessage.DateTime.Value.DateTime, Is.EqualTo(now.DateTime.ToUniversalTime()));
             Assert.That(loggedMessage.Detail, Is.EqualTo(exception.ToString()));
             Assert.That(loggedMessage.Data != null);
             Assert.That(loggedMessage.Data.Count, Is.EqualTo(1));

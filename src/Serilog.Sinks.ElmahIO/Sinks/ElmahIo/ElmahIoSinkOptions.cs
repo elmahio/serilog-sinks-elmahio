@@ -1,4 +1,4 @@
-﻿using Elmah.Io.Client.Models;
+﻿using Elmah.Io.Client;
 using Serilog.Core;
 using Serilog.Events;
 using System;
