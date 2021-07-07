@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>Serilog sink that writes to elmah.io</Description>
-    <VersionPrefix>4.0.0-pre</VersionPrefix>
+    <VersionPrefix>4.0.1-pre</VersionPrefix>
     <Authors>Michiel van Oudheusden, elmah.io, Serilog Contributors</Authors>
     <TargetFrameworks>net45;netstandard1.3</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
