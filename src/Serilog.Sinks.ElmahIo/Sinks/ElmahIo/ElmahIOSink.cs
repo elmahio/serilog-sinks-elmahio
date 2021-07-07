@@ -33,8 +33,10 @@ namespace Serilog.Sinks.ElmahIo
     {
 #if DOTNETCORE
         internal static string _assemblyVersion = typeof(ElmahIoSink).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
+        internal static string _serilogAssemblyVersion = typeof(Log).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
 #else
         internal static string _assemblyVersion = typeof(ElmahIoSink).Assembly.GetName().Version.ToString();
+        internal static string _serilogAssemblyVersion = typeof(Log).Assembly.GetName().Version.ToString();
 #endif
 
         readonly ElmahIoSinkOptions _options;
@@ -71,6 +73,7 @@ namespace Serilog.Sinks.ElmahIo
                 var api = ElmahioAPI.Create(_options.ApiKey);
                 api.HttpClient.Timeout = new TimeSpan(0, 0, 30);
                 api.HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue("Serilog.Sinks.ElmahIo", _assemblyVersion)));
+                api.HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue("Serilog", _serilogAssemblyVersion)));
                 api.Messages.OnMessage += (sender, args) =>
                 {
                     _options.OnMessage?.Invoke(args.Message);
