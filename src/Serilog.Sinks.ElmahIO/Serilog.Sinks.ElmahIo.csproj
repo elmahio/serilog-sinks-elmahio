@@ -2,18 +2,16 @@
 
   <PropertyGroup>
     <Description>Serilog sink that writes to elmah.io</Description>
-    <VersionPrefix>4.0.2</VersionPrefix>
     <Authors>Michiel van Oudheusden, elmah.io, Serilog Contributors</Authors>
     <TargetFrameworks>net45;netstandard1.3</TargetFrameworks>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Serilog.Sinks.ElmahIo</AssemblyName>
     <PackageId>Serilog.Sinks.ElmahIo</PackageId>
     <PackageTags>serilog;logging;elmah;elmah.io;error</PackageTags>
-    <PackageIcon>serilog-sink-nuget.png</PackageIcon>
-    <PackageProjectUrl>http://serilog.net</PackageProjectUrl>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageProjectUrl>https://elmah.io</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/serilog/serilog-sinks-elmahio</RepositoryUrl>
+    <RepositoryUrl>https://github.com/elmahio/serilog-sinks-elmahio</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.3' ">1.6.1</NetStandardImplicitPackageVersion>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
@@ -23,6 +21,10 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -49,7 +51,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="images\serilog-sink-nuget.png" Pack="true" PackagePath="\"/>
+    <None Include="images\icon.png" Pack="true" PackagePath="\" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>
