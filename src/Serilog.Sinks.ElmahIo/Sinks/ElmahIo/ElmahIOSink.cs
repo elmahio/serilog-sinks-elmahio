@@ -18,6 +18,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Security.Claims;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Elmah.Io.Client;
@@ -70,10 +71,11 @@ namespace Serilog.Sinks.ElmahIo
             var client = _client;
             if (_client == null)
             {
-                var api = ElmahioAPI.Create(_options.ApiKey);
-                api.HttpClient.Timeout = new TimeSpan(0, 0, 30);
-                api.HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue("Serilog.Sinks.ElmahIo", _assemblyVersion)));
-                api.HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue("Serilog", _serilogAssemblyVersion)));
+                var api = ElmahioAPI.Create(_options.ApiKey, new ElmahIoOptions
+                {
+                    Timeout = new TimeSpan(0, 0, 30),
+                    UserAgent = UserAgent(),
+                });
                 api.Messages.OnMessage += (sender, args) =>
                 {
                     _options.OnMessage?.Invoke(args.Message);
@@ -132,6 +134,15 @@ namespace Serilog.Sinks.ElmahIo
             {
                 Debugging.SelfLog.WriteLine("Caught exception while emitting to sink: {0}", e);
             }
+        }
+
+        private string UserAgent()
+        {
+            return new StringBuilder()
+                .Append(new ProductInfoHeaderValue(new ProductHeaderValue("Serilog.Sinks.ElmahIo", _assemblyVersion)).ToString())
+                .Append(" ")
+                .Append(new ProductInfoHeaderValue(new ProductHeaderValue("Serilog", _serilogAssemblyVersion)).ToString())
+                .ToString();
         }
 
         private string CorrelationId(LogEvent logEvent)
