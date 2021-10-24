@@ -21,6 +21,11 @@ namespace Serilog.Sinks.ElmahIo
         public Guid LogId { get; set; }
 
         /// <summary>
+        /// An application name to put on all log messages.
+        /// </summary>
+        public string Application { get; set; }
+
+        /// <summary>
         /// Callback executed on each log message. Additional properties can be set on the provided message.
         /// </summary>
         public Action<CreateMessage> OnMessage { get; set; }

@@ -13,19 +13,27 @@ namespace Serilog.Sinks.ElmahIo.Tests
 {
     public class ElmahIoSinkTest
     {
+        private DateTimeOffset Now = DateTimeOffset.Now;
+        private IList<CreateMessage> loggedMessages;
+        private IElmahioAPI clientMock;
+
+        [SetUp]
+        public void SetUp()
+        {
+            loggedMessages = null;
+            clientMock = Substitute.For<IElmahioAPI>();
+            var messagesMock = Substitute.For<IMessagesClient>();
+            clientMock.Messages.Returns(messagesMock);
+            messagesMock
+                .When(x => x.CreateBulkAndNotifyAsync(Arg.Any<Guid>(), Arg.Any<IList<CreateMessage>>()))
+                .Do(x => loggedMessages = x.Arg<IList<CreateMessage>>());
+        }
+
         [Test]
         public void CanEmitCustomFields()
         {
             // Arrange
-            var clientMock = Substitute.For<IElmahioAPI>();
-            var messagesMock = Substitute.For<IMessagesClient>();
-            clientMock.Messages.Returns(messagesMock);
             var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock);
-            IList<CreateMessage> loggedMessages = null;
-            messagesMock
-                .When(x => x.CreateBulkAndNotifyAsync(Arg.Any<Guid>(), Arg.Any<IList<CreateMessage>>()))
-                .Do(x => loggedMessages = x.Arg<IList<CreateMessage>>());
-            var now = DateTimeOffset.Now;
             var serverVariables = new Dictionary<ScalarValue, LogEventPropertyValue>();
             serverVariables.Add(new ScalarValue("serverVariableKey"), new ScalarValue("serverVariableValue"));
             var cookies = new Dictionary<ScalarValue, LogEventPropertyValue>();
@@ -38,7 +46,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
             // Act
             sink.Emit(
                 new LogEvent(
-                    now,
+                    Now,
                     LogEventLevel.Error,
                     null,
                     new MessageTemplate("{type} {hostname} {application} {user} {source} {method} {version} {url} {statusCode}", new List<MessageTemplateToken>()), new List<LogEventProperty>
@@ -86,15 +94,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
         public void CanEmit()
         {
             // Arrange
-            var clientMock = Substitute.For<IElmahioAPI>();
-            var messagesMock = Substitute.For<IMessagesClient>();
-            clientMock.Messages.Returns(messagesMock);
             var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock);
-            IList<CreateMessage> loggedMessages = null;
-            messagesMock
-                .When(x => x.CreateBulkAndNotifyAsync(Arg.Any<Guid>(), Arg.Any<IList<CreateMessage>>()))
-                .Do(x => loggedMessages = x.Arg<IList<CreateMessage>>());
-            var now = DateTimeOffset.Now;
             var exception = Exception();
 #if !DOTNETCORE
             var principalMock = Substitute.For<IPrincipal>();
@@ -107,7 +107,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
             // Act
             sink.Emit(
                 new LogEvent(
-                    now,
+                    Now,
                     LogEventLevel.Error,
                     exception,
                     new MessageTemplate("Simple test", new List<MessageTemplateToken>()), new List<LogEventProperty>
@@ -124,7 +124,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
             var loggedMessage = loggedMessages.First();
             Assert.That(loggedMessage.Severity, Is.EqualTo(Severity.Error.ToString()));
             Assert.That(loggedMessage.DateTime.HasValue);
-            Assert.That(loggedMessage.DateTime.Value.DateTime, Is.EqualTo(now.DateTime.ToUniversalTime()));
+            Assert.That(loggedMessage.DateTime.Value.DateTime, Is.EqualTo(Now.DateTime.ToUniversalTime()));
             Assert.That(loggedMessage.Detail, Is.EqualTo(exception.ToString()));
             Assert.That(loggedMessage.Data != null);
             Assert.That(loggedMessage.Data.Count, Is.EqualTo(1));
@@ -134,6 +134,23 @@ namespace Serilog.Sinks.ElmahIo.Tests
 #if !DOTNETCORE
             Assert.That(loggedMessage.User, Is.EqualTo("User"));
 #endif
+        }
+
+        [Test]
+        public void CanEmitApplicationFromOptions()
+        {
+            // Arrange
+            var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty) { Application = "MyApp" }, clientMock);
+
+            // Act
+            sink.Emit(new LogEvent(Now, LogEventLevel.Information, null, new MessageTemplate("Hello World", new List<MessageTemplateToken>()), new List<LogEventProperty>()));
+
+            // Assert
+            sink.Dispose();
+            Assert.That(loggedMessages != null);
+            Assert.That(loggedMessages.Count, Is.EqualTo(1));
+            var loggedMessage = loggedMessages.First();
+            Assert.That(loggedMessage.Application, Is.EqualTo("MyApp"));
         }
 
         private Exception Exception()

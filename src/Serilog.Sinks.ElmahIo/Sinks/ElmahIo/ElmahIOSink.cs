@@ -195,7 +195,9 @@ namespace Serilog.Sinks.ElmahIo
 
         private string Application(LogEvent logEvent)
         {
-            return String(logEvent, "application");
+            var application = String(logEvent, "application");
+            if (!string.IsNullOrWhiteSpace(application)) return application;
+            return _options.Application;
         }
 
         private string Source(LogEvent logEvent)

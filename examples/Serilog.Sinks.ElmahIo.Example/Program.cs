@@ -32,6 +32,9 @@ namespace Serilog.Sinks.ElmahIo.Example
                         // As default, everything is logged. You can set a minimum log level using the following code:
                         MinimumLogEventLevel = LogEventLevel.Information,
 
+                        // Decorate all messages with an application name
+                        //Application = "MyApp",
+
                         // The elmah.io sink bulk upload log messages. To change the default behavior, change one or both of the following properties:
                         //BatchPostingLimit = 50,
                         //Period = TimeSpan.FromSeconds(2),
