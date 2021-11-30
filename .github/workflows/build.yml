@@ -13,8 +13,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.0.2
     - name: Setup .NET Core 2.1
       uses: actions/setup-dotnet@v1
       with:
@@ -31,6 +29,8 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
+    - name: Remove ASP.NET sample
+      run: dotnet sln serilog-sinks-elmahio.sln remove examples\Serilog.Sinks.ElmahIo.AspNet\Serilog.Sinks.ElmahIo.AspNet.csproj
     - name: Install dependencies
       run: dotnet restore
     - name: Build
