@@ -152,7 +152,26 @@ namespace Serilog.Sinks.ElmahIo
 
         private IList<Item> ServerVariables(LogEvent logEvent)
         {
-            return Items(logEvent, "servervariables");
+            var serverVariables = Items(logEvent, "servervariables") ?? new List<Item>();
+
+            if (!serverVariables.Any(sv => sv.Key.Equals("User-Agent", StringComparison.OrdinalIgnoreCase)))
+            {
+                // Look for user agent in properties
+                var userAgent = String(logEvent, "HttpRequestUserAgent");
+                if (!string.IsNullOrWhiteSpace(userAgent)) serverVariables.Add(new Item("User-Agent", userAgent));
+            }
+
+            if (!serverVariables.Any(sv => sv.Key.Equals("CLIENT-IP", StringComparison.OrdinalIgnoreCase)
+                || sv.Key.Equals("CLIENT_IP", StringComparison.OrdinalIgnoreCase)
+                || sv.Key.Equals("HTTP-CLIENT-IP", StringComparison.OrdinalIgnoreCase)
+                || sv.Key.Equals("HTTP_CLIENT_IP", StringComparison.OrdinalIgnoreCase)))
+            {
+                // Look for user agent in properties
+                var clientIp = String(logEvent, "HttpRequestClientHostIP");
+                if (!string.IsNullOrWhiteSpace(clientIp)) serverVariables.Add(new Item("Client-IP", clientIp));
+            }
+
+            return serverVariables;
         }
 
         private IList<Item> Cookies(LogEvent logEvent)
@@ -167,7 +186,28 @@ namespace Serilog.Sinks.ElmahIo
 
         private IList<Item> QueryString(LogEvent logEvent)
         {
-            return Items(logEvent, "querystring");
+            var queryString = Items(logEvent, "querystring") ?? new List<Item>();
+            if (queryString.Count > 0) return queryString;
+
+            var httpRequestUrl = String(logEvent, "HttpRequestUrl");
+            if (!string.IsNullOrWhiteSpace(httpRequestUrl) && Uri.TryCreate(httpRequestUrl, UriKind.Absolute, out Uri result) && !string.IsNullOrWhiteSpace(result.Query))
+            {
+                queryString.AddRange(result
+                    .Query
+                    .TrimStart('?')
+                    .Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s =>
+                    {
+                        var splitted = s.Split(new[] { '=' });
+                        var item = new Item();
+                        if (splitted.Length > 0) item.Key = splitted[0];
+                        if (splitted.Length > 1) item.Value = splitted[1];
+                        return item;
+                    })
+                    .ToList());
+            }
+
+            return queryString;
         }
 
         private int? StatusCode(LogEvent logEvent)
@@ -180,7 +220,12 @@ namespace Serilog.Sinks.ElmahIo
 
         private string Url(LogEvent logEvent)
         {
-            return String(logEvent, "url");
+            var url = String(logEvent, "url");
+            if (!string.IsNullOrWhiteSpace(url)) return url;
+            var httpRequestUrl = String(logEvent, "HttpRequestUrl");
+            if (!string.IsNullOrWhiteSpace(httpRequestUrl) && Uri.TryCreate(httpRequestUrl, UriKind.Absolute, out Uri result)) return result.AbsolutePath;
+
+            return null;
         }
 
         private string Version(LogEvent logEvent)
@@ -190,7 +235,12 @@ namespace Serilog.Sinks.ElmahIo
 
         private string Method(LogEvent logEvent)
         {
-            return String(logEvent, "method");
+            var method = String(logEvent, "method");
+            if (!string.IsNullOrWhiteSpace(method)) return method;
+            var httpRequestType = String(logEvent, "HttpRequestType");
+            if (!string.IsNullOrWhiteSpace(httpRequestType) && Uri.TryCreate(httpRequestType, UriKind.Relative, out _)) return httpRequestType;
+
+            return null;
         }
 
         private string Application(LogEvent logEvent)
@@ -222,6 +272,8 @@ namespace Serilog.Sinks.ElmahIo
         {
             var user = String(logEvent, "user");
             if (!string.IsNullOrWhiteSpace(user)) return user;
+            var userName = String(logEvent, "UserName");
+            if (!string.IsNullOrWhiteSpace(userName)) return userName;
 #if !DOTNETCORE
             return Thread.CurrentPrincipal?.Identity?.Name;
 #else
@@ -321,7 +373,7 @@ namespace Serilog.Sinks.ElmahIo
             return string.Join(", ", properties.Select(p => p.Value));
         }
 
-        private IList<Item> Items(LogEvent logEvent, string keyName)
+        private List<Item> Items(LogEvent logEvent, string keyName)
         {
             if (logEvent == null || logEvent.Properties == null || logEvent.Properties.Count == 0) return null;
             if (!logEvent.Properties.Keys.Any(key => key.Equals(keyName, StringComparison.OrdinalIgnoreCase))) return null;
