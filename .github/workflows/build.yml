@@ -30,6 +30,15 @@ jobs:
       run: dotnet test --no-restore --verbosity normal
     - name: Pack
       run: dotnet pack --configuration Release src/Serilog.Sinks.ElmahIo/Serilog.Sinks.ElmahIo.csproj /p:Version=4.2.${{ github.run_number }}-pre
+    - name: Upload NuGet package to GitHub
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: src/Serilog.Sinks.ElmahIo/bin/Release/Serilog.Sinks.ElmahIo.4.2.${{ github.run_number }}-pre.nupkg
+        asset_name: Serilog.Sinks.ElmahIo.4.2.${{ github.run_number }}-pre.nupkg
+        asset_content_type: application/zip
     - name: Install dotnet-validate
       run: dotnet tool install --global dotnet-validate --version 0.0.1-preview.304
     - name: Validate
