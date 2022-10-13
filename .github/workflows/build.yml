@@ -33,7 +33,7 @@ jobs:
     - name: Install dotnet-validate
       run: dotnet tool install --global dotnet-validate --version 0.0.1-preview.304
     - name: Validate
-      run: dotnet validate package local src/Serilog.Sinks.ElmahIo/bin/Release/serilog.sinks.elmahio.4.2.${{ github.run_number }}-pre.nupkg
+      run: dotnet validate package local src/Serilog.Sinks.ElmahIO/bin/Release/Serilog.Sinks.ElmahIo.4.2.${{ github.run_number }}-pre.nupkg
     - name: Push
       run: dotnet nuget push src/Serilog.Sinks.ElmahIo/bin/Release/Serilog.Sinks.ElmahIo.4.2.${{ github.run_number }}-pre.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
       if: ${{ github.event_name == 'push' }}
