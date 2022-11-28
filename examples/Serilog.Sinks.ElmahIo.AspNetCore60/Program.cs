@@ -4,7 +4,7 @@ using Serilog.Sinks.ElmahIo;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((ctx, lc) => lc
-    .WriteTo.ElmahIo(new ElmahIoSinkOptions("800e433a1aac4a9ba0a7b3a90ff059f3", new Guid("b4cb36a9-a272-45e8-8ca6-a48e1728a8d5"))));
+    .WriteTo.ElmahIo(new ElmahIoSinkOptions("API_KEY", new Guid("LOG_ID"))));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
