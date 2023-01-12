@@ -109,6 +109,7 @@ namespace Serilog.Sinks.ElmahIo
                     Url = Url(logEvent),
                     StatusCode = StatusCode(logEvent),
                     CorrelationId = CorrelationId(logEvent),
+                    Category = Category(logEvent),
                     ServerVariables = ServerVariables(logEvent),
                     Cookies = Cookies(logEvent),
                     Form = Form(logEvent),
@@ -143,6 +144,13 @@ namespace Serilog.Sinks.ElmahIo
                 .Append(" ")
                 .Append(new ProductInfoHeaderValue(new ProductHeaderValue("Serilog", _serilogAssemblyVersion)).ToString())
                 .ToString();
+        }
+
+        private string Category(LogEvent logEvent)
+        {
+            var category = String(logEvent, "category");
+            if (!string.IsNullOrWhiteSpace(category)) return category;
+            return String(logEvent, "sourcecontext");
         }
 
         private string CorrelationId(LogEvent logEvent)

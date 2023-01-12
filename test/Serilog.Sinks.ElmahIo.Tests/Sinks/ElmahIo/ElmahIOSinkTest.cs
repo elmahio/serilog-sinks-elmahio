@@ -60,6 +60,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
                         new LogEventProperty("version", new ScalarValue("version")),
                         new LogEventProperty("url", new ScalarValue("url")),
                         new LogEventProperty("statusCode", new ScalarValue(400)),
+                        new LogEventProperty("category", new ScalarValue("category")),
                         new LogEventProperty("correlationId", new ScalarValue("correlationId")),
                         new LogEventProperty("serverVariables", new DictionaryValue(serverVariables)),
                         new LogEventProperty("cookies", new DictionaryValue(cookies)),
@@ -84,6 +85,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
             Assert.That(loggedMessage.Url, Is.EqualTo("url"));
             Assert.That(loggedMessage.StatusCode, Is.EqualTo(400));
             Assert.That(loggedMessage.CorrelationId, Is.EqualTo("correlationId"));
+            Assert.That(loggedMessage.Category, Is.EqualTo("category"));
             Assert.That(loggedMessage.ServerVariables.Any(sv => sv.Key == "serverVariableKey" && sv.Value == "serverVariableValue"));
             Assert.That(loggedMessage.Cookies.Any(sv => sv.Key == "cookiesKey" && sv.Value == "cookiesValue"));
             Assert.That(loggedMessage.Form.Any(sv => sv.Key == "formKey" && sv.Value == "formValue"));
@@ -151,6 +153,33 @@ namespace Serilog.Sinks.ElmahIo.Tests
             Assert.That(loggedMessages.Count, Is.EqualTo(1));
             var loggedMessage = loggedMessages.First();
             Assert.That(loggedMessage.Application, Is.EqualTo("MyApp"));
+        }
+
+        [Test]
+        public void CanEmitCategoryFromSourceContext()
+        {
+            // Arrange
+            var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock);
+
+            // Act
+            sink.Emit(
+                new LogEvent(
+                    Now,
+                    LogEventLevel.Error,
+                    null,
+                    new MessageTemplate("Test", new List<MessageTemplateToken>()), new List<LogEventProperty>
+                    {
+                        new LogEventProperty("SourceContext", new ScalarValue("category")),
+                    }
+                )
+            );
+
+            // Assert
+            sink.Dispose();
+            Assert.That(loggedMessages != null);
+            Assert.That(loggedMessages.Count, Is.EqualTo(1));
+            var loggedMessage = loggedMessages.First();
+            Assert.That(loggedMessage.Category, Is.EqualTo("category"));
         }
 
         private Exception Exception()
