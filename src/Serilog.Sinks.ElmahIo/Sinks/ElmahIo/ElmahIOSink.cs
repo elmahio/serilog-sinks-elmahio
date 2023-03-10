@@ -30,7 +30,7 @@ namespace Serilog.Sinks.ElmahIo
     /// <summary>
     /// Writes log events to the elmah.io service.
     /// </summary>
-    public class ElmahIoSink : PeriodicBatchingSink
+    public class ElmahIoSink : IBatchedLogEventSink
     {
 #if DOTNETCORE
         internal static string _assemblyVersion = typeof(ElmahIoSink).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
@@ -47,7 +47,6 @@ namespace Serilog.Sinks.ElmahIo
         /// Construct a sink that saves logs to the specified storage account.
         /// </summary>
         public ElmahIoSink(ElmahIoSinkOptions options)
-            : base(options.BatchPostingLimit, options.Period)
         {
             _options = options;
         }
@@ -63,9 +62,9 @@ namespace Serilog.Sinks.ElmahIo
         }
 
         /// <inheritdoc />
-        protected override async Task EmitBatchAsync(IEnumerable<LogEvent> events)
+        public async Task EmitBatchAsync(IEnumerable<LogEvent> batch)
         {
-            if (events == null || !events.Any())
+            if (batch == null || !batch.Any())
                 return;
 
             var client = _client;
@@ -89,7 +88,7 @@ namespace Serilog.Sinks.ElmahIo
 
             var messages = new List<CreateMessage>();
 
-            foreach (var logEvent in events)
+            foreach (var logEvent in batch)
             {
                 var message = new CreateMessage
                 {
@@ -135,6 +134,12 @@ namespace Serilog.Sinks.ElmahIo
             {
                 Debugging.SelfLog.WriteLine("Caught exception while emitting to sink: {0}", e);
             }
+        }
+
+        /// <inheritdoc />
+        public Task OnEmptyBatchAsync()
+        {
+            return Task.FromResult(0);
         }
 
         private string UserAgent()

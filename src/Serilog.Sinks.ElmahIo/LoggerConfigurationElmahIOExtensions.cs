@@ -16,6 +16,7 @@ using System;
 using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Sinks.ElmahIo;
+using Serilog.Sinks.PeriodicBatching;
 
 namespace Serilog
 {
@@ -84,8 +85,19 @@ namespace Serilog
             ElmahIoSinkOptions options)
         {
             if (loggerConfiguration == null) throw new ArgumentNullException(nameof(loggerConfiguration));
+
+            var elmahIoSink = new ElmahIoSink(options);
+
+            var batchingOptions = new PeriodicBatchingSinkOptions
+            {
+                BatchSizeLimit = options.BatchPostingLimit,
+                Period = options.Period,
+            };
+
+            var batchingSink = new PeriodicBatchingSink(elmahIoSink, batchingOptions);
+
             return loggerConfiguration.Sink(
-                new ElmahIoSink(options),
+                batchingSink,
                 restrictedToMinimumLevel: options.MinimumLogEventLevel ?? LevelAlias.Minimum,
                 levelSwitch: options.LevelSwitch);
         }

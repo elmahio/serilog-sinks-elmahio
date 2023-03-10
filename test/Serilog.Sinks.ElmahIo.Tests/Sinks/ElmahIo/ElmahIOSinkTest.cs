@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
 using System.Threading;
+using System.Threading.Tasks;
 using Elmah.Io.Client;
 using NSubstitute;
 using NUnit.Framework;
@@ -30,7 +31,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
         }
 
         [Test]
-        public void CanEmitCustomFields()
+        public async Task CanEmitCustomFields()
         {
             // Arrange
             var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock);
@@ -44,7 +45,8 @@ namespace Serilog.Sinks.ElmahIo.Tests
             queryString.Add(new ScalarValue("queryStringKey"), new ScalarValue("queryStringValue"));
 
             // Act
-            sink.Emit(
+            await sink.EmitBatchAsync(new List<LogEvent>
+            {
                 new LogEvent(
                     Now,
                     LogEventLevel.Error,
@@ -68,10 +70,9 @@ namespace Serilog.Sinks.ElmahIo.Tests
                         new LogEventProperty("queryString", new DictionaryValue(queryString)),
                     }
                 )
-            );
+            });
 
             // Assert
-            sink.Dispose();
             Assert.That(loggedMessages != null);
             Assert.That(loggedMessages.Count, Is.EqualTo(1));
             var loggedMessage = loggedMessages.First();
@@ -93,7 +94,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
         }
 
         [Test]
-        public void CanEmit()
+        public async Task CanEmit()
         {
             // Arrange
             var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock);
@@ -107,7 +108,8 @@ namespace Serilog.Sinks.ElmahIo.Tests
 #endif
 
             // Act
-            sink.Emit(
+            await sink.EmitBatchAsync(new List<LogEvent>
+            {
                 new LogEvent(
                     Now,
                     LogEventLevel.Error,
@@ -117,10 +119,9 @@ namespace Serilog.Sinks.ElmahIo.Tests
                         new LogEventProperty("name", new ScalarValue("value"))
                     }
                 )
-            );
+            });
 
             // Assert
-            sink.Dispose();
             Assert.That(loggedMessages != null);
             Assert.That(loggedMessages.Count, Is.EqualTo(1));
             var loggedMessage = loggedMessages.First();
@@ -139,16 +140,18 @@ namespace Serilog.Sinks.ElmahIo.Tests
         }
 
         [Test]
-        public void CanEmitApplicationFromOptions()
+        public async Task CanEmitApplicationFromOptions()
         {
             // Arrange
             var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty) { Application = "MyApp" }, clientMock);
 
             // Act
-            sink.Emit(new LogEvent(Now, LogEventLevel.Information, null, new MessageTemplate("Hello World", new List<MessageTemplateToken>()), new List<LogEventProperty>()));
+            await sink.EmitBatchAsync(new List<LogEvent>
+            {
+                new LogEvent(Now, LogEventLevel.Information, null, new MessageTemplate("Hello World", new List<MessageTemplateToken>()), new List<LogEventProperty>())
+            });
 
             // Assert
-            sink.Dispose();
             Assert.That(loggedMessages != null);
             Assert.That(loggedMessages.Count, Is.EqualTo(1));
             var loggedMessage = loggedMessages.First();
@@ -156,13 +159,14 @@ namespace Serilog.Sinks.ElmahIo.Tests
         }
 
         [Test]
-        public void CanEmitCategoryFromSourceContext()
+        public async Task CanEmitCategoryFromSourceContext()
         {
             // Arrange
             var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock);
 
             // Act
-            sink.Emit(
+            await sink.EmitBatchAsync(new List<LogEvent>
+            {
                 new LogEvent(
                     Now,
                     LogEventLevel.Error,
@@ -172,10 +176,9 @@ namespace Serilog.Sinks.ElmahIo.Tests
                         new LogEventProperty("SourceContext", new ScalarValue("category")),
                     }
                 )
-            );
+            });
 
             // Assert
-            sink.Dispose();
             Assert.That(loggedMessages != null);
             Assert.That(loggedMessages.Count, Is.EqualTo(1));
             var loggedMessage = loggedMessages.First();
