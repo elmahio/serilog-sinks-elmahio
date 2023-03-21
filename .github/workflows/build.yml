@@ -29,11 +29,11 @@ jobs:
     - name: Test
       run: dotnet test --no-restore --verbosity normal
     - name: Pack
-      run: dotnet pack --configuration Release src/Serilog.Sinks.ElmahIo/Serilog.Sinks.ElmahIo.csproj /p:Version=4.3.${{ github.run_number }}-pre
+      run: dotnet pack --configuration Release src/Serilog.Sinks.ElmahIo/Serilog.Sinks.ElmahIo.csproj /p:Version=4.3.${{ github.run_number }}
     - name: Install dotnet-validate
       run: dotnet tool install --global dotnet-validate --version 0.0.1-preview.304
     - name: Validate
-      run: dotnet validate package local src/Serilog.Sinks.ElmahIO/bin/Release/Serilog.Sinks.ElmahIo.4.3.${{ github.run_number }}-pre.nupkg
+      run: dotnet validate package local src/Serilog.Sinks.ElmahIO/bin/Release/Serilog.Sinks.ElmahIo.4.3.${{ github.run_number }}.nupkg
     - name: Push
-      run: dotnet nuget push src/Serilog.Sinks.ElmahIo/bin/Release/Serilog.Sinks.ElmahIo.4.3.${{ github.run_number }}-pre.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push src/Serilog.Sinks.ElmahIo/bin/Release/Serilog.Sinks.ElmahIo.4.3.${{ github.run_number }}.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
       if: ${{ github.event_name == 'push' }}
