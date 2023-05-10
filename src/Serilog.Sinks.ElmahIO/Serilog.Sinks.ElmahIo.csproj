@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>Serilog sink that writes to elmah.io</Description>
     <Authors>Michiel van Oudheusden, elmah.io, Serilog Contributors</Authors>
-    <TargetFrameworks>net45;netstandard1.3</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Serilog.Sinks.ElmahIo</AssemblyName>
     <PackageId>Serilog.Sinks.ElmahIo</PackageId>
@@ -34,23 +34,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Serilog" Version="2.8.0" />
+    <PackageReference Include="Serilog" Version="3.0.0-dev-01998" />
     <PackageReference Include="Serilog.Sinks.PeriodicBatching" Version="3.1.0" />
-    <PackageReference Include="Elmah.Io.Client" Version="[4.4.56,5)" />
+    <PackageReference Include="Elmah.Io.Client" Version="[5.0.57-pre,6)" />
   </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <PackageReference Include="System.Security.Claims" Version="4.3.0" />
-  </ItemGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-     <DefineConstants>$(DefineConstants);DOTNETCORE;NO_SERIALIZATION</DefineConstants>
-  </PropertyGroup>
 
   <ItemGroup>
     <None Include="images\icon.png" Pack="true" PackagePath="\" />

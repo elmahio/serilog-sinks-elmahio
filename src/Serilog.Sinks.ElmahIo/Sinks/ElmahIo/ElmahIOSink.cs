@@ -32,13 +32,8 @@ namespace Serilog.Sinks.ElmahIo
     /// </summary>
     public class ElmahIoSink : IBatchedLogEventSink
     {
-#if DOTNETCORE
         internal static string _assemblyVersion = typeof(ElmahIoSink).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
         internal static string _serilogAssemblyVersion = typeof(Log).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
-#else
-        internal static string _assemblyVersion = typeof(ElmahIoSink).Assembly.GetName().Version.ToString();
-        internal static string _serilogAssemblyVersion = typeof(Log).Assembly.GetName().Version.ToString();
-#endif
 
         readonly ElmahIoSinkOptions _options;
         readonly IElmahioAPI _client;
@@ -274,11 +269,13 @@ namespace Serilog.Sinks.ElmahIo
         {
             var hostname = String(logEvent, "hostname");
             if (!string.IsNullOrWhiteSpace(hostname)) return hostname;
-#if !DOTNETCORE
-            return Environment.MachineName;
-#else
-            return Environment.GetEnvironmentVariable("COMPUTERNAME");
-#endif
+
+            var machineName = Environment.MachineName;
+            if (!string.IsNullOrWhiteSpace(machineName)) return machineName;
+
+            var computerName = Environment.GetEnvironmentVariable("COMPUTERNAME");
+            if (!string.IsNullOrWhiteSpace(computerName)) return computerName;
+            return null;
         }
 
         private string User(LogEvent logEvent)
@@ -287,11 +284,7 @@ namespace Serilog.Sinks.ElmahIo
             if (!string.IsNullOrWhiteSpace(user)) return user;
             var userName = String(logEvent, "UserName");
             if (!string.IsNullOrWhiteSpace(userName)) return userName;
-#if !DOTNETCORE
-            return Thread.CurrentPrincipal?.Identity?.Name;
-#else
             return ClaimsPrincipal.Current?.Identity?.Name;
-#endif
         }
 
         private string Type(LogEvent logEvent)

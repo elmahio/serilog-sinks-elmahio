@@ -99,13 +99,11 @@ namespace Serilog.Sinks.ElmahIo.Tests
             // Arrange
             var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock);
             var exception = Exception();
-#if !DOTNETCORE
             var principalMock = Substitute.For<IPrincipal>();
             var identityMock = Substitute.For<IIdentity>();
             identityMock.Name.Returns("User");
             principalMock.Identity.Returns(identityMock);
             Thread.CurrentPrincipal = principalMock;
-#endif
 
             // Act
             await sink.EmitBatchAsync(new List<LogEvent>

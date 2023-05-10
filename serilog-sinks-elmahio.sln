@@ -22,9 +22,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.ElmahIo.AspNet", "examples\Serilog.Sinks.ElmahIo.AspNet\Serilog.Sinks.ElmahIo.AspNet.csproj", "{F7BD5F31-488F-47BC-A005-AE83F41F8BB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.ElmahIo.AspNetCore60", "examples\Serilog.Sinks.ElmahIo.AspNetCore60\Serilog.Sinks.ElmahIo.AspNetCore60.csproj", "{308662AE-B26C-49A5-A4D4-5D7DCBADF22F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.ElmahIo.AspNetCore60", "examples\Serilog.Sinks.ElmahIo.AspNetCore60\Serilog.Sinks.ElmahIo.AspNetCore60.csproj", "{308662AE-B26C-49A5-A4D4-5D7DCBADF22F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.ElmahIo.Console70", "examples\Serilog.Sinks.ElmahIo.Console70\Serilog.Sinks.ElmahIo.Console70.csproj", "{6C8F0094-0E75-46F2-A688-D74251A760E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.ElmahIo.Console70", "examples\Serilog.Sinks.ElmahIo.Console70\Serilog.Sinks.ElmahIo.Console70.csproj", "{6C8F0094-0E75-46F2-A688-D74251A760E2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
