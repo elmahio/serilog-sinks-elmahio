@@ -26,53 +26,6 @@ namespace Serilog
     public static class LoggerConfigurationElmahIoExtensions
     {
         /// <summary>
-        /// Adds a sink that writes log events to elmah.io. This overload accepts logId as a string and
-        /// should be used from packages not supporting Guids only (like Serilog.Settings.Configuration).
-        /// </summary>
-        /// <param name="loggerConfiguration">The logger configuration.</param>
-        /// <param name="apiKey">An API key from the organization containing the log.</param>
-        /// <param name="logId">The log ID as found on the elmah.io website.</param>
-        /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink. Set to Verbose by default.</param>
-        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        /// <returns>Logger configuration, allowing configuration to continue.</returns>
-        /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        [Obsolete("Use the overload accepting ElmahIoSinkOptions")]
-        public static LoggerConfiguration ElmahIo(
-            this LoggerSinkConfiguration loggerConfiguration,
-            string apiKey,
-            string logId,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            IFormatProvider formatProvider = null)
-        {
-            return ElmahIo(loggerConfiguration, apiKey, new Guid(logId), restrictedToMinimumLevel, formatProvider);
-        }
-
-        /// <summary>
-        /// Adds a sink that writes log events to elmah.io. 
-        /// </summary>
-        /// <param name="loggerConfiguration">The logger configuration.</param>
-        /// <param name="apiKey">An API key from the organization containing the log.</param>
-        /// <param name="logId">The log ID as found on the elmah.io website.</param>
-        /// <param name="restrictedToMinimumLevel">The minimum log event level required in order to write an event to the sink. Set to Verbose by default.</param>
-        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        /// <returns>Logger configuration, allowing configuration to continue.</returns>
-        /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
-        [Obsolete("Use the overload accepting ElmahIoSinkOptions")]
-        public static LoggerConfiguration ElmahIo(
-            this LoggerSinkConfiguration loggerConfiguration,
-            string apiKey,
-            Guid logId,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
-            IFormatProvider formatProvider = null)
-        {
-            return ElmahIo(loggerConfiguration, new ElmahIoSinkOptions(apiKey, logId)
-            {
-                MinimumLogEventLevel = restrictedToMinimumLevel,
-                FormatProvider = formatProvider,
-            });
-        }
-
-        /// <summary>
         /// Adds a sink that writes log events to elmah.io. If not specified through options,
         /// every level are logged to elmah.io. It is recommended to log warnings and up only.
         /// </summary>
