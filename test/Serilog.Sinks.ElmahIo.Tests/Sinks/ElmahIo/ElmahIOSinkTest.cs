@@ -128,8 +128,10 @@ namespace Serilog.Sinks.ElmahIo.Tests
             Assert.That(loggedMessage.DateTime.Value.DateTime, Is.EqualTo(Now.DateTime.ToUniversalTime()));
             Assert.That(loggedMessage.Detail, Is.EqualTo(exception.ToString()));
             Assert.That(loggedMessage.Data != null);
-            Assert.That(loggedMessage.Data.Count, Is.EqualTo(2));
             Assert.That(loggedMessage.Data.Any(d => d.Key == "name"));
+#if DOTNETCORE
+            Assert.That(loggedMessage.Data.Any(d => d.Key == "X-ELMAHIO-FRAMEWORKDESCRIPTION"));
+#endif
             Assert.That(loggedMessage.Data.Any(d => d.Key == "X-ELMAHIO-EXCEPTIONINSPECTOR"));
             Assert.That(loggedMessage.Type, Is.EqualTo(typeof(DivideByZeroException).FullName));
             Assert.That(loggedMessage.Hostname, Is.EqualTo(Environment.MachineName));
