@@ -15,11 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.ElmahIo.Examp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.ElmahIo.Tests", "test\Serilog.Sinks.ElmahIo.Tests\Serilog.Sinks.ElmahIo.Tests.csproj", "{A2F260FD-3EFD-4135-919F-594FF7449575}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{341F4A07-F421-40D5-9631-D82A99D99688}"
-	ProjectSection(SolutionItems) = preProject
-		.github\workflows\build.yml = .github\workflows\build.yml
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.ElmahIo.AspNet", "examples\Serilog.Sinks.ElmahIo.AspNet\Serilog.Sinks.ElmahIo.AspNet.csproj", "{F7BD5F31-488F-47BC-A005-AE83F41F8BB9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.ElmahIo.AspNetCore60", "examples\Serilog.Sinks.ElmahIo.AspNetCore60\Serilog.Sinks.ElmahIo.AspNetCore60.csproj", "{308662AE-B26C-49A5-A4D4-5D7DCBADF22F}"
