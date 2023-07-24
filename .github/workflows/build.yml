@@ -2,9 +2,9 @@ name: build
 
 on:
   push:
-    branches: [ serilog3 ]
+    branches: [ main ]
   pull_request:
-    branches: [ serilog3 ]
+    branches: [ main ]
 
 jobs:
   build:
