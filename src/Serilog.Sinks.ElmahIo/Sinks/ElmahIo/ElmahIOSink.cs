@@ -1,11 +1,11 @@
 ﻿// Copyright 2014 Serilog Contributors
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,6 @@ using System.Net.Http.Headers;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Elmah.Io.Client;
 using Serilog.Events;
@@ -32,8 +31,8 @@ namespace Serilog.Sinks.ElmahIo
     /// </summary>
     public class ElmahIoSink : IBatchedLogEventSink
     {
-        internal static string _assemblyVersion = typeof(ElmahIoSink).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
-        internal static string _serilogAssemblyVersion = typeof(Log).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
+        private static string _assemblyVersion = typeof(ElmahIoSink).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
+        private static string _serilogAssemblyVersion = typeof(Log).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
 
         readonly ElmahIoSinkOptions _options;
         readonly IElmahioAPI _client;
@@ -162,14 +161,14 @@ namespace Serilog.Sinks.ElmahIo
         {
             var serverVariables = Items(logEvent, "servervariables") ?? new List<Item>();
 
-            if (!serverVariables.Any(sv => sv.Key.Equals("User-Agent", StringComparison.OrdinalIgnoreCase)))
+            if (!serverVariables.Exists(sv => sv.Key.Equals("User-Agent", StringComparison.OrdinalIgnoreCase)))
             {
                 // Look for user agent in properties
                 var userAgent = String(logEvent, "HttpRequestUserAgent");
                 if (!string.IsNullOrWhiteSpace(userAgent)) serverVariables.Add(new Item("User-Agent", userAgent));
             }
 
-            if (!serverVariables.Any(sv => sv.Key.Equals("CLIENT-IP", StringComparison.OrdinalIgnoreCase)
+            if (!serverVariables.Exists(sv => sv.Key.Equals("CLIENT-IP", StringComparison.OrdinalIgnoreCase)
                 || sv.Key.Equals("CLIENT_IP", StringComparison.OrdinalIgnoreCase)
                 || sv.Key.Equals("HTTP-CLIENT-IP", StringComparison.OrdinalIgnoreCase)
                 || sv.Key.Equals("HTTP_CLIENT_IP", StringComparison.OrdinalIgnoreCase)))
@@ -206,7 +205,7 @@ namespace Serilog.Sinks.ElmahIo
                     .Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries)
                     .Select(s =>
                     {
-                        var splitted = s.Split(new[] { '=' });
+                        var splitted = s.Split('=');
                         var item = new Item();
                         if (splitted.Length > 0) item.Key = splitted[0];
                         if (splitted.Length > 1) item.Value = splitted[1];
@@ -381,11 +380,11 @@ namespace Serilog.Sinks.ElmahIo
 
         private List<Item> Items(LogEvent logEvent, string keyName)
         {
-            if (logEvent == null || logEvent.Properties == null || logEvent.Properties.Count == 0) return null;
-            if (!logEvent.Properties.Keys.Any(key => key.Equals(keyName, StringComparison.OrdinalIgnoreCase))) return null;
+            if (logEvent == null || logEvent.Properties == null || logEvent.Properties.Count == 0) return new List<Item>();
+            if (!logEvent.Properties.Keys.Any(key => key.Equals(keyName, StringComparison.OrdinalIgnoreCase))) return new List<Item>();
 
             var property = logEvent.Properties.First(prop => prop.Key.Equals(keyName, StringComparison.OrdinalIgnoreCase));
-            if (!(property.Value is DictionaryValue dictionaryValue)) return null;
+            if (!(property.Value is DictionaryValue dictionaryValue)) return new List<Item>();
 
             return dictionaryValue
                 .Elements

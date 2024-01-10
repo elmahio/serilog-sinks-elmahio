@@ -75,7 +75,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
             // Assert
             Assert.That(loggedMessages != null);
             Assert.That(loggedMessages.Count, Is.EqualTo(1));
-            var loggedMessage = loggedMessages.First();
+            var loggedMessage = loggedMessages[0];
             Assert.That(loggedMessage.Type, Is.EqualTo("type"));
             Assert.That(loggedMessage.Hostname, Is.EqualTo("hostname"));
             Assert.That(loggedMessage.Application, Is.EqualTo("application"));
@@ -122,7 +122,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
             // Assert
             Assert.That(loggedMessages != null);
             Assert.That(loggedMessages.Count, Is.EqualTo(1));
-            var loggedMessage = loggedMessages.First();
+            var loggedMessage = loggedMessages[0];
             Assert.That(loggedMessage.Severity, Is.EqualTo(Severity.Error.ToString()));
             Assert.That(loggedMessage.DateTime.HasValue);
             Assert.That(loggedMessage.DateTime.Value.DateTime, Is.EqualTo(Now.DateTime.ToUniversalTime()));
@@ -155,7 +155,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
             // Assert
             Assert.That(loggedMessages != null);
             Assert.That(loggedMessages.Count, Is.EqualTo(1));
-            var loggedMessage = loggedMessages.First();
+            var loggedMessage = loggedMessages[0];
             Assert.That(loggedMessage.Application, Is.EqualTo("MyApp"));
         }
 
@@ -182,7 +182,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
             // Assert
             Assert.That(loggedMessages != null);
             Assert.That(loggedMessages.Count, Is.EqualTo(1));
-            var loggedMessage = loggedMessages.First();
+            var loggedMessage = loggedMessages[0];
             Assert.That(loggedMessage.Category, Is.EqualTo("category"));
         }
 

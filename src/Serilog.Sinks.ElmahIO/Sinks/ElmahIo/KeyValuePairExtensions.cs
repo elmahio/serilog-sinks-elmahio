@@ -13,7 +13,7 @@ namespace Serilog.Sinks.ElmahIo
         private static string Trim(string s)
         {
             if (string.IsNullOrWhiteSpace(s)) return null;
-            return s.TrimStart(new[] { '\"' }).TrimEnd(new[] { '\"' });
+            return s.TrimStart('\"').TrimEnd('\"');
         }
     }
 }
