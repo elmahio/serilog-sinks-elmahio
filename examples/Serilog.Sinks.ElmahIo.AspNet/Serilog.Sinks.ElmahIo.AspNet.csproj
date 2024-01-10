@@ -45,8 +45,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Elmah.Io.Client, Version=5.0.66.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Elmah.Io.Client.5.0.66\lib\net461\Elmah.Io.Client.dll</HintPath>
+    <Reference Include="Elmah.Io.Client, Version=5.1.71.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Elmah.Io.Client.5.1.71-pre\lib\net461\Elmah.Io.Client.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
