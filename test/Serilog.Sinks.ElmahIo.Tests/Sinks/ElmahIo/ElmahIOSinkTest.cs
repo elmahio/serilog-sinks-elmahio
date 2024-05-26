@@ -14,7 +14,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
 {
     public class ElmahIoSinkTest
     {
-        private DateTimeOffset Now = DateTimeOffset.Now;
+        private readonly DateTimeOffset Now = DateTimeOffset.Now;
         private IList<CreateMessage> loggedMessages;
         private IElmahioAPI clientMock;
 
@@ -35,39 +35,47 @@ namespace Serilog.Sinks.ElmahIo.Tests
         {
             // Arrange
             var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock);
-            var serverVariables = new Dictionary<ScalarValue, LogEventPropertyValue>();
-            serverVariables.Add(new ScalarValue("serverVariableKey"), new ScalarValue("serverVariableValue"));
-            var cookies = new Dictionary<ScalarValue, LogEventPropertyValue>();
-            cookies.Add(new ScalarValue("cookiesKey"), new ScalarValue("cookiesValue"));
-            var form = new Dictionary<ScalarValue, LogEventPropertyValue>();
-            form.Add(new ScalarValue("formKey"), new ScalarValue("formValue"));
-            var queryString = new Dictionary<ScalarValue, LogEventPropertyValue>();
-            queryString.Add(new ScalarValue("queryStringKey"), new ScalarValue("queryStringValue"));
+            var serverVariables = new Dictionary<ScalarValue, LogEventPropertyValue>
+            {
+                { new ScalarValue("serverVariableKey"), new ScalarValue("serverVariableValue") }
+            };
+            var cookies = new Dictionary<ScalarValue, LogEventPropertyValue>
+            {
+                { new ScalarValue("cookiesKey"), new ScalarValue("cookiesValue") }
+            };
+            var form = new Dictionary<ScalarValue, LogEventPropertyValue>
+            {
+                { new ScalarValue("formKey"), new ScalarValue("formValue") }
+            };
+            var queryString = new Dictionary<ScalarValue, LogEventPropertyValue>
+            {
+                { new ScalarValue("queryStringKey"), new ScalarValue("queryStringValue") }
+            };
 
             // Act
             await sink.EmitBatchAsync(new List<LogEvent>
             {
-                new LogEvent(
+                new(
                     Now,
                     LogEventLevel.Error,
                     null,
                     new MessageTemplate("{type} {hostname} {application} {user} {source} {method} {version} {url} {statusCode}", new List<MessageTemplateToken>()), new List<LogEventProperty>
                     {
-                        new LogEventProperty("type", new ScalarValue("type")),
-                        new LogEventProperty("hostname", new ScalarValue("hostname")),
-                        new LogEventProperty("application", new ScalarValue("application")),
-                        new LogEventProperty("user", new ScalarValue("user")),
-                        new LogEventProperty("source", new ScalarValue("source")),
-                        new LogEventProperty("method", new ScalarValue("method")),
-                        new LogEventProperty("version", new ScalarValue("version")),
-                        new LogEventProperty("url", new ScalarValue("url")),
-                        new LogEventProperty("statusCode", new ScalarValue(400)),
-                        new LogEventProperty("category", new ScalarValue("category")),
-                        new LogEventProperty("correlationId", new ScalarValue("correlationId")),
-                        new LogEventProperty("serverVariables", new DictionaryValue(serverVariables)),
-                        new LogEventProperty("cookies", new DictionaryValue(cookies)),
-                        new LogEventProperty("form", new DictionaryValue(form)),
-                        new LogEventProperty("queryString", new DictionaryValue(queryString)),
+                        new("type", new ScalarValue("type")),
+                        new("hostname", new ScalarValue("hostname")),
+                        new("application", new ScalarValue("application")),
+                        new("user", new ScalarValue("user")),
+                        new("source", new ScalarValue("source")),
+                        new("method", new ScalarValue("method")),
+                        new("version", new ScalarValue("version")),
+                        new("url", new ScalarValue("url")),
+                        new("statusCode", new ScalarValue(400)),
+                        new("category", new ScalarValue("category")),
+                        new("correlationId", new ScalarValue("correlationId")),
+                        new("serverVariables", new DictionaryValue(serverVariables)),
+                        new("cookies", new DictionaryValue(cookies)),
+                        new("form", new DictionaryValue(form)),
+                        new("queryString", new DictionaryValue(queryString)),
                     }
                 )
             });
@@ -108,13 +116,13 @@ namespace Serilog.Sinks.ElmahIo.Tests
             // Act
             await sink.EmitBatchAsync(new List<LogEvent>
             {
-                new LogEvent(
+                new(
                     Now,
                     LogEventLevel.Error,
                     exception,
                     new MessageTemplate("Simple test", new List<MessageTemplateToken>()), new List<LogEventProperty>
                     {
-                        new LogEventProperty("name", new ScalarValue("value"))
+                        new("name", new ScalarValue("value"))
                     }
                 )
             });
@@ -135,9 +143,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
             Assert.That(loggedMessage.Data.Any(d => d.Key == "X-ELMAHIO-EXCEPTIONINSPECTOR"));
             Assert.That(loggedMessage.Type, Is.EqualTo(typeof(DivideByZeroException).FullName));
             Assert.That(loggedMessage.Hostname, Is.EqualTo(Environment.MachineName));
-#if !DOTNETCORE
             Assert.That(loggedMessage.User, Is.EqualTo("User"));
-#endif
         }
 
         [Test]
@@ -149,7 +155,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
             // Act
             await sink.EmitBatchAsync(new List<LogEvent>
             {
-                new LogEvent(Now, LogEventLevel.Information, null, new MessageTemplate("Hello World", new List<MessageTemplateToken>()), new List<LogEventProperty>())
+                new(Now, LogEventLevel.Information, null, new MessageTemplate("Hello World", new List<MessageTemplateToken>()), new List<LogEventProperty>())
             });
 
             // Assert
@@ -168,13 +174,13 @@ namespace Serilog.Sinks.ElmahIo.Tests
             // Act
             await sink.EmitBatchAsync(new List<LogEvent>
             {
-                new LogEvent(
+                new(
                     Now,
                     LogEventLevel.Error,
                     null,
                     new MessageTemplate("Test", new List<MessageTemplateToken>()), new List<LogEventProperty>
                     {
-                        new LogEventProperty("SourceContext", new ScalarValue("category")),
+                        new("SourceContext", new ScalarValue("category")),
                     }
                 )
             });
@@ -186,7 +192,7 @@ namespace Serilog.Sinks.ElmahIo.Tests
             Assert.That(loggedMessage.Category, Is.EqualTo("category"));
         }
 
-        private Exception Exception()
+        private static Exception Exception()
         {
             return new Exception("error", new DivideByZeroException());
         }

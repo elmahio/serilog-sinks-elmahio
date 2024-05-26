@@ -31,8 +31,8 @@ namespace Serilog.Sinks.ElmahIo
     /// </summary>
     public class ElmahIoSink : IBatchedLogEventSink
     {
-        private static string _assemblyVersion = typeof(ElmahIoSink).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
-        private static string _serilogAssemblyVersion = typeof(Log).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
+        private static readonly string _assemblyVersion = typeof(ElmahIoSink).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
+        private static readonly string _serilogAssemblyVersion = typeof(Log).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
 
         readonly ElmahIoSinkOptions _options;
         readonly IElmahioAPI _client;
