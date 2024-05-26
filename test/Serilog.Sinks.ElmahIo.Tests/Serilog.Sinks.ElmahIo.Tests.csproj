@@ -7,17 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Extensions.Configuration.Object" Version="1.1.0" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+		<PackageReference Include="Extensions.Configuration.Object" Version="1.1.1" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
 		<PackageReference Include="NSubstitute" Version="5.1.0" />
-		<PackageReference Include="NUnit" Version="3.14.0" />
+		<PackageReference Include="NUnit" Version="4.1.0" />
 		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
-		<PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
-	</ItemGroup>
-
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
-		<Reference Include="System" />
-		<Reference Include="Microsoft.CSharp" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
