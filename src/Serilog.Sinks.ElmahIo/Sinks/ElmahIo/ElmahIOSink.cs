@@ -69,6 +69,15 @@ namespace Serilog.Sinks.ElmahIo
                     Timeout = new TimeSpan(0, 0, 30),
                     UserAgent = UserAgent(),
                 });
+
+                api.Messages.OnMessageFilter += (sender, args) =>
+                {
+                    var filter = _options.OnFilter?.Invoke(args.Message);
+                    if (filter.HasValue && filter.Value)
+                    {
+                        args.Filter = true;
+                    }
+                };
                 api.Messages.OnMessage += (sender, args) =>
                 {
                     _options.OnMessage?.Invoke(args.Message);
@@ -108,11 +117,6 @@ namespace Serilog.Sinks.ElmahIo
                     Form = Form(logEvent),
                     QueryString = QueryString(logEvent),
                 };
-
-                if (_options.OnFilter != null && _options.OnFilter(message))
-                {
-                    continue;
-                }
 
                 messages.Add(message);
             }

@@ -192,6 +192,29 @@ namespace Serilog.Sinks.ElmahIo.Tests
             Assert.That(loggedMessage.Category, Is.EqualTo("category"));
         }
 
+        [Test]
+        public async Task CanFilterBatchFromOptions()
+        {
+            // Arrange
+            var messages = 0;
+            var options = new ElmahIoSinkOptions("API_KEY", Guid.NewGuid())
+            {
+                OnFilter = msg => true,
+                OnMessage = msg => messages++
+            };
+            var sink = new ElmahIoSink(options);
+
+            // Act
+            await sink.EmitBatchAsync(new List<LogEvent>
+            {
+                new(Now, LogEventLevel.Error, null, new MessageTemplate("Test1", new List<MessageTemplateToken>()), new List<LogEventProperty>())
+            });
+
+            // Assert
+            Assert.That(messages, Is.EqualTo(0));
+
+        }
+
         private static Exception Exception()
         {
             return new Exception("error", new DivideByZeroException());
