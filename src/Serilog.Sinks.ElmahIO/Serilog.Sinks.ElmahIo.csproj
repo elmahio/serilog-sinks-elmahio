@@ -36,7 +36,7 @@
 	<ItemGroup>
 		<PackageReference Include="Serilog" Version="3.0.1" />
 		<PackageReference Include="Serilog.Sinks.PeriodicBatching" Version="3.1.0" />
-		<PackageReference Include="Elmah.Io.Client" Version="[5.1.76,6)" />
+		<PackageReference Include="Elmah.Io.Client" Version="[5.2.77-pre,6)" />
 	</ItemGroup>
 
 	<ItemGroup>
