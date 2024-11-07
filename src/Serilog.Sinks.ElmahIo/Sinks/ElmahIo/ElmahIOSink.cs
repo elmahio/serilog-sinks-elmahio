@@ -140,7 +140,7 @@ namespace Serilog.Sinks.ElmahIo
             return Task.FromResult(0);
         }
 
-        private string UserAgent()
+        private static string UserAgent()
         {
             return new StringBuilder()
                 .Append(new ProductInfoHeaderValue(new ProductHeaderValue("Serilog.Sinks.ElmahIo", _assemblyVersion)).ToString())
@@ -149,21 +149,21 @@ namespace Serilog.Sinks.ElmahIo
                 .ToString();
         }
 
-        private string Category(LogEvent logEvent)
+        private static string Category(LogEvent logEvent)
         {
             var category = String(logEvent, "category");
             if (!string.IsNullOrWhiteSpace(category)) return category;
             return String(logEvent, "sourcecontext");
         }
 
-        private string CorrelationId(LogEvent logEvent)
+        private static string CorrelationId(LogEvent logEvent)
         {
             return String(logEvent, "correlationid");
         }
 
-        private IList<Item> ServerVariables(LogEvent logEvent)
+        private static IList<Item> ServerVariables(LogEvent logEvent)
         {
-            var serverVariables = Items(logEvent, "servervariables") ?? new List<Item>();
+            var serverVariables = Items(logEvent, "servervariables") ?? [];
 
             if (!serverVariables.Exists(sv => sv.Key.Equals("User-Agent", StringComparison.OrdinalIgnoreCase)))
             {
@@ -185,19 +185,19 @@ namespace Serilog.Sinks.ElmahIo
             return serverVariables;
         }
 
-        private IList<Item> Cookies(LogEvent logEvent)
+        private static IList<Item> Cookies(LogEvent logEvent)
         {
             return Items(logEvent, "cookies");
         }
 
-        private IList<Item> Form(LogEvent logEvent)
+        private static IList<Item> Form(LogEvent logEvent)
         {
             return Items(logEvent, "form");
         }
 
-        private IList<Item> QueryString(LogEvent logEvent)
+        private static IList<Item> QueryString(LogEvent logEvent)
         {
-            var queryString = Items(logEvent, "querystring") ?? new List<Item>();
+            var queryString = Items(logEvent, "querystring") ?? [];
             if (queryString.Count > 0) return queryString;
 
             var httpRequestUrl = String(logEvent, "HttpRequestUrl");
@@ -221,7 +221,7 @@ namespace Serilog.Sinks.ElmahIo
             return queryString;
         }
 
-        private int? StatusCode(LogEvent logEvent)
+        private static int? StatusCode(LogEvent logEvent)
         {
             var statusCode = String(logEvent, "statuscode");
             if (string.IsNullOrWhiteSpace(statusCode)) return null;
@@ -229,7 +229,7 @@ namespace Serilog.Sinks.ElmahIo
             return code;
         }
 
-        private string Url(LogEvent logEvent)
+        private static string Url(LogEvent logEvent)
         {
             var url = String(logEvent, "url");
             if (!string.IsNullOrWhiteSpace(url)) return url;
@@ -239,12 +239,12 @@ namespace Serilog.Sinks.ElmahIo
             return null;
         }
 
-        private string Version(LogEvent logEvent)
+        private static string Version(LogEvent logEvent)
         {
             return String(logEvent, "version");
         }
 
-        private string Method(LogEvent logEvent)
+        private static string Method(LogEvent logEvent)
         {
             var method = String(logEvent, "method");
             if (!string.IsNullOrWhiteSpace(method)) return method;
@@ -261,14 +261,14 @@ namespace Serilog.Sinks.ElmahIo
             return _options.Application;
         }
 
-        private string Source(LogEvent logEvent)
+        private static string Source(LogEvent logEvent)
         {
             var source = String(logEvent, "source");
             if (!string.IsNullOrWhiteSpace(source)) return source;
             return logEvent.Exception?.GetBaseException().Source;
         }
 
-        private string Hostname(LogEvent logEvent)
+        private static string Hostname(LogEvent logEvent)
         {
             var hostname = String(logEvent, "hostname");
             if (!string.IsNullOrWhiteSpace(hostname)) return hostname;
@@ -281,7 +281,7 @@ namespace Serilog.Sinks.ElmahIo
             return null;
         }
 
-        private string User(LogEvent logEvent)
+        private static string User(LogEvent logEvent)
         {
             var user = String(logEvent, "user");
             if (!string.IsNullOrWhiteSpace(user)) return user;
@@ -290,7 +290,7 @@ namespace Serilog.Sinks.ElmahIo
             return ClaimsPrincipal.Current?.Identity?.Name;
         }
 
-        private string Type(LogEvent logEvent)
+        private static string Type(LogEvent logEvent)
         {
             var type = String(logEvent, "type");
             if (!string.IsNullOrWhiteSpace(type)) return type;
@@ -314,19 +314,19 @@ namespace Serilog.Sinks.ElmahIo
         {
             if (keyValue.Value == null)
             {
-                return new List<Item>
-                {
+                return
+                [
                     new Item { Key = keyValue.Key, Value = null }
-                };
+                ];
             }
 
             // Handle simple things like strings and integers
             if (keyValue.Value is ScalarValue scalarValue)
             {
-                return new List<Item>
-                {
+                return
+                [
                     new Item { Key = keyValue.Key, Value = scalarValue.Value?.ToString() }
-                };
+                ];
             }
 
             // Handle dictionary types
@@ -347,29 +347,23 @@ namespace Serilog.Sinks.ElmahIo
                     .ToList();
             }
 
-            return new List<Item>
-            {
+            return
+            [
                 new Item { Key = keyValue.Key, Value = keyValue.Value.ToString()}
-            };
+            ];
         }
 
         static string LevelToSeverity(LogEvent logEvent)
         {
-            switch (logEvent.Level)
+            return logEvent.Level switch
             {
-                case LogEventLevel.Debug:
-                    return Severity.Debug.ToString();
-                case LogEventLevel.Error:
-                    return Severity.Error.ToString();
-                case LogEventLevel.Fatal:
-                    return Severity.Fatal.ToString();
-                case LogEventLevel.Verbose:
-                    return Severity.Verbose.ToString();
-                case LogEventLevel.Warning:
-                    return Severity.Warning.ToString();
-                default:
-                    return Severity.Information.ToString();
-            }
+                LogEventLevel.Debug => Severity.Debug.ToString(),
+                LogEventLevel.Error => Severity.Error.ToString(),
+                LogEventLevel.Fatal => Severity.Fatal.ToString(),
+                LogEventLevel.Verbose => Severity.Verbose.ToString(),
+                LogEventLevel.Warning => Severity.Warning.ToString(),
+                _ => Severity.Information.ToString(),
+            };
         }
 
         static string String(LogEvent logEvent, string name)
@@ -382,13 +376,13 @@ namespace Serilog.Sinks.ElmahIo
             return string.Join(", ", properties.Select(p => p.Value));
         }
 
-        private List<Item> Items(LogEvent logEvent, string keyName)
+        private static List<Item> Items(LogEvent logEvent, string keyName)
         {
-            if (logEvent == null || logEvent.Properties == null || logEvent.Properties.Count == 0) return new List<Item>();
-            if (!logEvent.Properties.Keys.Any(key => key.Equals(keyName, StringComparison.OrdinalIgnoreCase))) return new List<Item>();
+            if (logEvent == null || logEvent.Properties == null || logEvent.Properties.Count == 0) return [];
+            if (!logEvent.Properties.Keys.Any(key => key.Equals(keyName, StringComparison.OrdinalIgnoreCase))) return [];
 
             var property = logEvent.Properties.First(prop => prop.Key.Equals(keyName, StringComparison.OrdinalIgnoreCase));
-            if (!(property.Value is DictionaryValue dictionaryValue)) return new List<Item>();
+            if (property.Value is not DictionaryValue dictionaryValue) return [];
 
             return dictionaryValue
                 .Elements

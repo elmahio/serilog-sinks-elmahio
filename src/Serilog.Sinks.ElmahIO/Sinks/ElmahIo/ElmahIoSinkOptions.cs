@@ -8,17 +8,21 @@ namespace Serilog.Sinks.ElmahIo
     /// <summary>
     /// Provides ElmahIoSink with configurable options
     /// </summary>
-    public class ElmahIoSinkOptions
+    /// <remarks>
+    /// Creates a new options instance. Period will be set to 2 seconds and
+    /// BatchPostingLimit to 50 unless set manually afterwards.
+    /// </remarks>
+    public class ElmahIoSinkOptions(string apiKey, Guid logId)
     {
         /// <summary>
         /// An API key able to write messages to elmah.io (enable the Messages - Write permission).
         /// </summary>
-        public string ApiKey { get; set; }
+        public string ApiKey { get; set; } = apiKey;
 
         /// <summary>
         /// The ID of the log to store messages from Serilog.
         /// </summary>
-        public Guid LogId { get; set; }
+        public Guid LogId { get; set; } = logId;
 
         /// <summary>
         /// An application name to put on all log messages.
@@ -48,12 +52,12 @@ namespace Serilog.Sinks.ElmahIo
         ///<summary>
         /// The maximum number of events to post in a single batch. Defaults to: 50.
         /// </summary>
-        public int BatchPostingLimit { get; set; }
+        public int BatchPostingLimit { get; set; } = 50;
 
         ///<summary>
         /// The time to wait between checking for event batches. Defaults to 2 seconds.
         /// </summary>
-        public TimeSpan Period { get; set; }
+        public TimeSpan Period { get; set; } = TimeSpan.FromSeconds(2);
 
         /// <summary>
         /// The minimum log event level required in order to write an event to the sink.
@@ -64,17 +68,5 @@ namespace Serilog.Sinks.ElmahIo
         /// A switch allowing the pass-through minimum level to be changed at runtime.
         /// </summary>
         public LoggingLevelSwitch LevelSwitch { get; set; }
-
-        /// <summary>
-        /// Creates a new options instance. Period will be set to 2 seconds and
-        /// BatchPostingLimit to 50 unless set manually afterwards.
-        /// </summary>
-        public ElmahIoSinkOptions(string apiKey, Guid logId)
-        {
-            ApiKey = apiKey;
-            LogId = logId;
-            Period = TimeSpan.FromSeconds(2);
-            BatchPostingLimit = 50;
-        }
     }
 }
