@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Reflection;
@@ -21,6 +22,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Elmah.Io.Client;
+using Newtonsoft.Json.Linq;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
 
@@ -35,11 +37,12 @@ namespace Serilog.Sinks.ElmahIo
         private static readonly string _serilogAssemblyVersion = typeof(Log).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
 
         readonly ElmahIoSinkOptions _options;
-        readonly IElmahioAPI _client;
+        private IElmahioAPI _client;
 
         /// <summary>
         /// Construct a sink that saves logs to the specified storage account.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0290:Use primary constructor", Justification = "Don't want to use primary constructors when there are more than one.")]
         public ElmahIoSink(ElmahIoSinkOptions options)
         {
             _options = options;
@@ -60,34 +63,6 @@ namespace Serilog.Sinks.ElmahIo
         {
             if (batch == null || !batch.Any())
                 return;
-
-            var client = _client;
-            if (_client == null)
-            {
-                var api = ElmahioAPI.Create(_options.ApiKey, new ElmahIoOptions
-                {
-                    Timeout = new TimeSpan(0, 0, 30),
-                    UserAgent = UserAgent(),
-                });
-
-                api.Messages.OnMessageFilter += (sender, args) =>
-                {
-                    var filter = _options.OnFilter?.Invoke(args.Message);
-                    if (filter.HasValue && filter.Value)
-                    {
-                        args.Filter = true;
-                    }
-                };
-                api.Messages.OnMessage += (sender, args) =>
-                {
-                    _options.OnMessage?.Invoke(args.Message);
-                };
-                api.Messages.OnMessageFail += (sender, args) =>
-                {
-                    _options.OnError?.Invoke(args.Message, args.Error);
-                };
-                client = api;
-            }
 
             var messages = new List<CreateMessage>();
 
@@ -121,9 +96,11 @@ namespace Serilog.Sinks.ElmahIo
                 messages.Add(message);
             }
 
+            EnsureClient();
+
             try
             {
-                await client
+                await _client
                     .Messages
                     .CreateBulkAndNotifyAsync(_options.LogId, messages)
                     .ConfigureAwait(false);
@@ -388,6 +365,90 @@ namespace Serilog.Sinks.ElmahIo
                 .Elements
                 .Select(element => element.ToItem())
                 .ToList();
+        }
+
+        internal void CreateInstallation()
+        {
+            try
+            {
+                var logger = new LoggerInfo
+                {
+                    Type = "Serilog.Sinks.ElmahIo",
+                    Properties = [],
+                    ConfigFiles = [],
+                    Assemblies =
+                    [
+                        new AssemblyInfo { Name = "Serilog.Sinks.ElmahIo", Version = _assemblyVersion },
+                        new AssemblyInfo { Name = "Elmah.Io.Client", Version = typeof(IElmahioAPI).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version },
+                        new AssemblyInfo { Name = "Serilog", Version = _serilogAssemblyVersion }
+                    ],
+                };
+
+                var installation = new CreateInstallation
+                {
+                    Type = ApplicationInfoHelper.GetApplicationType(),
+                    Name = _options.Application,
+                    Loggers = [logger]
+                };
+
+                var location = GetType().Assembly.Location;
+                var currentDirectory = Path.GetDirectoryName(location);
+
+                var appsettingsFilePath = Path.Combine(currentDirectory, "appsettings.json");
+                if (File.Exists(appsettingsFilePath))
+                {
+                    var appsettingsContent = File.ReadAllText(appsettingsFilePath);
+                    var appsettingsObject = JObject.Parse(appsettingsContent);
+                    if (appsettingsObject.TryGetValue("Serilog", out JToken serilogSection))
+                    {
+                        logger.ConfigFiles.Add(new ConfigFile
+                        {
+                            Name = Path.GetFileName(appsettingsFilePath),
+                            Content = new JObject { { "Serilog", serilogSection.DeepClone() } }.ToString(),
+                            ContentType = "application/json"
+                        });
+                    }
+                }
+
+                EnsureClient();
+
+                _client.Installations.Create(_options.LogId.ToString(), installation);
+            }
+            catch (Exception e)
+            {
+                Debugging.SelfLog.WriteLine("Caught exception while creating installation: {0}", e);
+                // We don't want to crash the entire application if the installation fails. Carry on.
+            }
+        }
+
+        private void EnsureClient()
+        {
+            if (_client == null)
+            {
+                var api = ElmahioAPI.Create(_options.ApiKey, new ElmahIoOptions
+                {
+                    Timeout = new TimeSpan(0, 0, 30),
+                    UserAgent = UserAgent(),
+                });
+
+                api.Messages.OnMessageFilter += (sender, args) =>
+                {
+                    var filter = _options.OnFilter?.Invoke(args.Message);
+                    if (filter.HasValue && filter.Value)
+                    {
+                        args.Filter = true;
+                    }
+                };
+                api.Messages.OnMessage += (sender, args) =>
+                {
+                    _options.OnMessage?.Invoke(args.Message);
+                };
+                api.Messages.OnMessageFail += (sender, args) =>
+                {
+                    _options.OnError?.Invoke(args.Message, args.Error);
+                };
+                _client = api;
+            }
         }
     }
 }

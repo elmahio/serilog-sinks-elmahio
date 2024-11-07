@@ -49,6 +49,8 @@ namespace Serilog
 
             var batchingSink = new PeriodicBatchingSink(elmahIoSink, batchingOptions);
 
+            elmahIoSink.CreateInstallation();
+
             return loggerConfiguration.Sink(
                 batchingSink,
                 restrictedToMinimumLevel: options.MinimumLogEventLevel ?? LevelAlias.Minimum,
