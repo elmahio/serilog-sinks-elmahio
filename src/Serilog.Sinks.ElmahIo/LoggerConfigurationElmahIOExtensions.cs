@@ -18,7 +18,9 @@ using Serilog.Events;
 using Serilog.Sinks.ElmahIo;
 using Serilog.Sinks.PeriodicBatching;
 
+#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace Serilog
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 {
     /// <summary>
     /// Adds the WriteTo.ElmahIo() extension method to <see cref="LoggerConfiguration"/>.

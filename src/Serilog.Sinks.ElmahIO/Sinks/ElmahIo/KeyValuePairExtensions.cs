@@ -1,7 +1,9 @@
 ﻿using Elmah.Io.Client;
 using System.Collections.Generic;
 
+#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace Serilog.Sinks.ElmahIo
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 {
     internal static class KeyValuePairExtensions
     {

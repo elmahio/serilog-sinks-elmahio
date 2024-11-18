@@ -26,7 +26,9 @@ using Newtonsoft.Json.Linq;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
 
+#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace Serilog.Sinks.ElmahIo
+#pragma warning restore IDE0130 // Namespace does not match folder structure
 {
     /// <summary>
     /// Writes log events to the elmah.io service.
@@ -183,7 +185,7 @@ namespace Serilog.Sinks.ElmahIo
                 queryString.AddRange(result
                     .Query
                     .TrimStart('?')
-                    .Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Split(['&'], StringSplitOptions.RemoveEmptyEntries)
                     .Select(s =>
                     {
                         var splitted = s.Split('=');

@@ -8,9 +8,8 @@ using Elmah.Io.Client;
 using NSubstitute;
 using NUnit.Framework;
 using Serilog.Events;
-using Serilog.Parsing;
 
-namespace Serilog.Sinks.ElmahIo.Tests
+namespace Serilog.Sinks.ElmahIo.Tests.Sinks.ElmahIo
 {
     public class ElmahIoSinkTest
     {
@@ -53,14 +52,14 @@ namespace Serilog.Sinks.ElmahIo.Tests
             };
 
             // Act
-            await sink.EmitBatchAsync(new List<LogEvent>
-            {
+            await sink.EmitBatchAsync(
+            [
                 new(
                     Now,
                     LogEventLevel.Error,
                     null,
-                    new MessageTemplate("{type} {hostname} {application} {user} {source} {method} {version} {url} {statusCode}", new List<MessageTemplateToken>()), new List<LogEventProperty>
-                    {
+                    new MessageTemplate("{type} {hostname} {application} {user} {source} {method} {version} {url} {statusCode}", []),
+                    [
                         new("type", new ScalarValue("type")),
                         new("hostname", new ScalarValue("hostname")),
                         new("application", new ScalarValue("application")),
@@ -76,9 +75,9 @@ namespace Serilog.Sinks.ElmahIo.Tests
                         new("cookies", new DictionaryValue(cookies)),
                         new("form", new DictionaryValue(form)),
                         new("queryString", new DictionaryValue(queryString)),
-                    }
+                    ]
                 )
-            });
+            ]);
 
             // Assert
             Assert.That(loggedMessages != null);
@@ -114,18 +113,18 @@ namespace Serilog.Sinks.ElmahIo.Tests
             Thread.CurrentPrincipal = principalMock;
 
             // Act
-            await sink.EmitBatchAsync(new List<LogEvent>
-            {
+            await sink.EmitBatchAsync(
+            [
                 new(
                     Now,
                     LogEventLevel.Error,
                     exception,
-                    new MessageTemplate("Simple test", new List<MessageTemplateToken>()), new List<LogEventProperty>
-                    {
+                    new MessageTemplate("Simple test", []),
+                    [
                         new("name", new ScalarValue("value"))
-                    }
+                    ]
                 )
-            });
+            ]);
 
             // Assert
             Assert.That(loggedMessages != null);
@@ -153,10 +152,10 @@ namespace Serilog.Sinks.ElmahIo.Tests
             var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty) { Application = "MyApp" }, clientMock);
 
             // Act
-            await sink.EmitBatchAsync(new List<LogEvent>
-            {
-                new(Now, LogEventLevel.Information, null, new MessageTemplate("Hello World", new List<MessageTemplateToken>()), new List<LogEventProperty>())
-            });
+            await sink.EmitBatchAsync(
+            [
+                new(Now, LogEventLevel.Information, null, new MessageTemplate("Hello World", []), [])
+            ]);
 
             // Assert
             Assert.That(loggedMessages != null);
@@ -172,18 +171,18 @@ namespace Serilog.Sinks.ElmahIo.Tests
             var sink = new ElmahIoSink(new ElmahIoSinkOptions(string.Empty, Guid.Empty), clientMock);
 
             // Act
-            await sink.EmitBatchAsync(new List<LogEvent>
-            {
+            await sink.EmitBatchAsync(
+            [
                 new(
                     Now,
                     LogEventLevel.Error,
                     null,
-                    new MessageTemplate("Test", new List<MessageTemplateToken>()), new List<LogEventProperty>
-                    {
+                    new MessageTemplate("Test", []),
+                    [
                         new("SourceContext", new ScalarValue("category")),
-                    }
+                    ]
                 )
-            });
+            ]);
 
             // Assert
             Assert.That(loggedMessages != null);
@@ -205,10 +204,10 @@ namespace Serilog.Sinks.ElmahIo.Tests
             var sink = new ElmahIoSink(options);
 
             // Act
-            await sink.EmitBatchAsync(new List<LogEvent>
-            {
-                new(Now, LogEventLevel.Error, null, new MessageTemplate("Test1", new List<MessageTemplateToken>()), new List<LogEventProperty>())
-            });
+            await sink.EmitBatchAsync(
+            [
+                new(Now, LogEventLevel.Error, null, new MessageTemplate("Test1", []), [])
+            ]);
 
             // Assert
             Assert.That(messages, Is.EqualTo(0));

@@ -4,7 +4,7 @@
 		<TargetFrameworks>net472;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
 		<AssemblyName>Serilog.Sinks.ElmahIo.Tests</AssemblyName>
 		<GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-		<LangVersion>9.0</LangVersion>
+		<LangVersion>12.0</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
