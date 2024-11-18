@@ -13,7 +13,7 @@ Log.Logger =
             MinimumLogEventLevel = LogEventLevel.Information,
 
             // Decorate all messages with an application name
-            //Application = ".NET 7.0 Console",
+            //Application = ".NET 8.0 Console",
 
             // The elmah.io sink bulk upload log messages. To change the default behavior, change one or both of the following properties:
             //BatchPostingLimit = 50,
