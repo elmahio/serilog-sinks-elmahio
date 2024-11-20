@@ -21,6 +21,7 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Elmah.Io.Client;
 using Newtonsoft.Json.Linq;
 using Serilog.Events;
@@ -415,6 +416,55 @@ namespace Serilog.Sinks.ElmahIo
                             Name = Path.GetFileName(appsettingsFilePath),
                             Content = new JObject { { "Serilog", serilogSection.DeepClone() } }.ToString(),
                             ContentType = "application/json"
+                        });
+                    }
+                }
+
+                var appConfigPath = Path.Combine(currentDirectory, "App.config");
+                var webConfigPath = Path.Combine(currentDirectory, "Web.config");
+
+                string configPath = null;
+
+                if (File.Exists(appConfigPath)) configPath = appConfigPath;
+                else if (File.Exists(webConfigPath)) configPath = webConfigPath;
+
+                if (configPath != null)
+                {
+                    var configXml = XDocument.Load(configPath);
+
+                    var outputXml = new XDocument(
+                        new XElement("configuration",
+                            new XElement("appSettings")
+                        )
+                    );
+
+                    var appSettings = configXml.Descendants("appSettings").FirstOrDefault();
+                    if (appSettings != null)
+                    {
+                        foreach (var setting in appSettings.Elements("add"))
+                        {
+                            var key = setting.Attribute("key")?.Value;
+                            var value = setting.Attribute("value")?.Value;
+
+                            if (!string.IsNullOrEmpty(key) && key.StartsWith("serilog:", StringComparison.OrdinalIgnoreCase))
+                            {
+                                outputXml.Root.Element("appSettings")?.Add(
+                                    new XElement("add",
+                                        new XAttribute("key", key),
+                                        new XAttribute("value", value ?? string.Empty)
+                                    )
+                                );
+                            }
+                        }
+                    }
+
+                    if (outputXml.Root.Element("appSettings")?.HasElements == true)
+                    {
+                        logger.ConfigFiles.Add(new ConfigFile
+                        {
+                            Name = Path.GetFileName(configPath),
+                            Content = outputXml.ToString(),
+                            ContentType = "text/xml"
                         });
                     }
                 }
