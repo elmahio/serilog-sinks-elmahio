@@ -376,7 +376,14 @@ namespace Serilog.Sinks.ElmahIo
                 var logger = new LoggerInfo
                 {
                     Type = "Serilog.Sinks.ElmahIo",
-                    Properties = [],
+                    Properties =
+                    [
+                        new Item("FormatProvider", _options.FormatProvider?.GetType().FullName ?? ""),
+                        new Item("BatchPostingLimit", _options.BatchPostingLimit.ToString()),
+                        new Item("LevelSwitch", _options.LevelSwitch?.ToString() ?? ""),
+                        new Item("MinimumLogEventLevel", _options.MinimumLogEventLevel?.ToString() ?? ""),
+                        new Item("Period", _options.Period.ToString()),
+                    ],
                     ConfigFiles = [],
                     Assemblies =
                     [
