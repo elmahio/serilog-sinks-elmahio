@@ -464,7 +464,7 @@ namespace Serilog.Sinks.ElmahIo
                         {
                             Name = Path.GetFileName(configPath),
                             Content = outputXml.ToString(),
-                            ContentType = "text/xml"
+                            ContentType = "application/xml"
                         });
                     }
                 }
