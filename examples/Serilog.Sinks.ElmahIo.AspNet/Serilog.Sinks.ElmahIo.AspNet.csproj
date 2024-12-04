@@ -45,8 +45,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Elmah.Io.Client, Version=5.2.113.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Elmah.Io.Client.5.2.113-pre\lib\net461\Elmah.Io.Client.dll</HintPath>
+    <Reference Include="Elmah.Io.Client, Version=5.2.114.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Elmah.Io.Client.5.2.114\lib\net461\Elmah.Io.Client.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
