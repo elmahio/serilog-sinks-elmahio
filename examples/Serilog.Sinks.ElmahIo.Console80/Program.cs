@@ -1,4 +1,5 @@
-﻿using Serilog.Context;
+﻿#pragma warning disable S125 // Sections of code should not be commented out
+using Serilog.Context;
 using Serilog.Events;
 using Serilog.Sinks.ElmahIo;
 using Serilog;
@@ -72,4 +73,5 @@ Log.Information("A message with {type} {hostname} {application} {user} {source} 
     new Dictionary<string, string> { { "id", "42" } });
 
 // Make sure to emit any batched messages not already sent to elmah.io.
-Log.CloseAndFlush();
+await Log.CloseAndFlushAsync();
+#pragma warning restore S125 // Sections of code should not be commented out

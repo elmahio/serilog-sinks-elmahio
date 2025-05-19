@@ -71,7 +71,9 @@ namespace Serilog
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <returns>Logger configuration, allowing configuration to continue.</returns>
         /// <exception cref="ArgumentNullException">A required parameter is null.</exception>
+#pragma warning disable S1133 // Deprecated code should be removed
         [Obsolete("This method is intended for configuration through appsettings.json or similar only. From C# you should always call the overload accepting ElmahIoSinkOptions.")]
+#pragma warning restore S1133 // Deprecated code should be removed
         public static LoggerConfiguration ElmahIo(
             this LoggerSinkConfiguration loggerConfiguration,
             string apiKey,

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#pragma warning disable S125 // Sections of code should not be commented out
 using System;
 using System.Collections.Generic;
 using Serilog.Context;
@@ -19,9 +20,9 @@ using Serilog.Events;
 
 namespace Serilog.Sinks.ElmahIo.Example
 {
-    public class Program
+    public static class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             Log.Logger =
                 new LoggerConfiguration()
@@ -96,3 +97,4 @@ namespace Serilog.Sinks.ElmahIo.Example
         }
     }
 }
+#pragma warning restore S125 // Sections of code should not be commented out

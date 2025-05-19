@@ -1,3 +1,4 @@
+#pragma warning disable S125 // Sections of code should not be commented out
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.ElmahIo;
@@ -61,4 +62,5 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
-app.Run();
+await app.RunAsync();
+#pragma warning restore S125 // Sections of code should not be commented out

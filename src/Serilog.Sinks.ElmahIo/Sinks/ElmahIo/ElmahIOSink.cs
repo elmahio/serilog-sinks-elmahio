@@ -183,7 +183,7 @@ namespace Serilog.Sinks.ElmahIo
             var httpRequestUrl = String(logEvent, "HttpRequestUrl");
             if (!string.IsNullOrWhiteSpace(httpRequestUrl) && Uri.TryCreate(httpRequestUrl, UriKind.Absolute, out Uri result) && !string.IsNullOrWhiteSpace(result.Query))
             {
-                queryString.AddRange(result
+                queryString.AddRange([.. result
                     .Query
                     .TrimStart('?')
                     .Split(['&'], StringSplitOptions.RemoveEmptyEntries)
@@ -194,8 +194,7 @@ namespace Serilog.Sinks.ElmahIo
                         if (splitted.Length > 0) item.Key = splitted[0];
                         if (splitted.Length > 1) item.Value = splitted[1];
                         return item;
-                    })
-                    .ToList());
+                    })]);
             }
 
             return queryString;
@@ -312,19 +311,17 @@ namespace Serilog.Sinks.ElmahIo
             // Handle dictionary types
             if (keyValue.Value is DictionaryValue dictionaryValue)
             {
-                return dictionaryValue
+                return [.. dictionaryValue
                     .Elements
-                    .SelectMany(element => Properties(new KeyValuePair<string, LogEventPropertyValue>($"{keyValue.Key}.{element.Key}", element.Value)))
-                    .ToList();
+                    .SelectMany(element => Properties(new KeyValuePair<string, LogEventPropertyValue>($"{keyValue.Key}.{element.Key}", element.Value)))];
             }
 
             // Handle complext objects
             if (keyValue.Value is StructureValue structureValue)
             {
-                return structureValue
+                return [.. structureValue
                     .Properties
-                    .SelectMany(property => Properties(new KeyValuePair<string, LogEventPropertyValue>($"{keyValue.Key}.{property.Name}", property.Value)))
-                    .ToList();
+                    .SelectMany(property => Properties(new KeyValuePair<string, LogEventPropertyValue>($"{keyValue.Key}.{property.Name}", property.Value)))];
             }
 
             return
@@ -364,10 +361,9 @@ namespace Serilog.Sinks.ElmahIo
             var property = logEvent.Properties.First(prop => prop.Key.Equals(keyName, StringComparison.OrdinalIgnoreCase));
             if (property.Value is not DictionaryValue dictionaryValue) return [];
 
-            return dictionaryValue
+            return [.. dictionaryValue
                 .Elements
-                .Select(element => element.ToItem())
-                .ToList();
+                .Select(element => element.ToItem())];
         }
 
         internal void CreateInstallation()
