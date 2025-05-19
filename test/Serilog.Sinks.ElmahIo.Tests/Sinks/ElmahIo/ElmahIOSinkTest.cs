@@ -71,10 +71,10 @@ namespace Serilog.Sinks.ElmahIo.Tests.Sinks.ElmahIo
                         new("statusCode", new ScalarValue(400)),
                         new("category", new ScalarValue("category")),
                         new("correlationId", new ScalarValue("correlationId")),
-                        new("serverVariables", new DictionaryValue(serverVariables)),
+                        new("servervariables", new DictionaryValue(serverVariables)),
                         new("cookies", new DictionaryValue(cookies)),
                         new("form", new DictionaryValue(form)),
-                        new("queryString", new DictionaryValue(queryString)),
+                        new("querystring", new DictionaryValue(queryString)),
                     ]
                 )
             ]);
@@ -98,6 +98,10 @@ namespace Serilog.Sinks.ElmahIo.Tests.Sinks.ElmahIo
             Assert.That(loggedMessage.Cookies.Any(sv => sv.Key == "cookiesKey" && sv.Value == "cookiesValue"));
             Assert.That(loggedMessage.Form.Any(sv => sv.Key == "formKey" && sv.Value == "formValue"));
             Assert.That(loggedMessage.QueryString.Any(sv => sv.Key == "queryStringKey" && sv.Value == "queryStringValue"));
+            Assert.That(!loggedMessage.Data.Any(d => d.Key == "servervariables"));
+            Assert.That(!loggedMessage.Data.Any(d => d.Key == "cookies"));
+            Assert.That(!loggedMessage.Data.Any(d => d.Key == "form"));
+            Assert.That(!loggedMessage.Data.Any(d => d.Key == "querystring"));
         }
 
         [Test]

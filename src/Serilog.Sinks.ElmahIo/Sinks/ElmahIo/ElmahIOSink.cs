@@ -284,7 +284,22 @@ namespace Serilog.Sinks.ElmahIo
                 data.AddRange(logEvent.Exception.ToDataList());
             }
 
-            data.AddRange(logEvent.Properties.SelectMany(p => Properties(p)));
+            // List of property keys we want to exclude. If the log event has the properties where
+            // the value also matches a dictionary, these are put into the right fields on the
+            // elmah.io message (ServerVariables, Cookies, etc.). So, there is no need to include
+            // them in multiple data structures on the log message.
+            var excludedKeys = new List<string>()
+            {
+                "servervariables",
+                "cookies",
+                "form",
+                "querystring"
+            };
+
+            data.AddRange(logEvent
+                .Properties
+                .Where(p => !(p.Value is DictionaryValue && excludedKeys.Contains(p.Key)))
+                .SelectMany(p => Properties(p)));
 
             return data;
         }
