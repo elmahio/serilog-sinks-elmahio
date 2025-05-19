@@ -46,6 +46,12 @@ namespace Serilog.Sinks.ElmahIo
         /// </summary>
         public Func<CreateMessage, bool> OnFilter { get; set; }
 
+        /// <summary>
+        /// Register an action to be called before creating an installation. Use the OnInstallation
+        /// action to decorate installations with additional information related to your environment.
+        /// </summary>
+        public Action<CreateInstallation> OnInstallation { get; set; }
+
         ///<summary>
         /// Supplies culture-specific formatting information, or null.
         /// </summary>

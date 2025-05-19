@@ -388,6 +388,7 @@ namespace Serilog.Sinks.ElmahIo
                         new AssemblyInfo { Name = "Elmah.Io.Client", Version = typeof(IElmahioAPI).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version },
                         new AssemblyInfo { Name = "Serilog", Version = _serilogAssemblyVersion }
                     ],
+                    EnvironmentVariables = [],
                 };
 
                 var installation = new CreateInstallation
@@ -465,9 +466,18 @@ namespace Serilog.Sinks.ElmahIo
                     }
                 }
 
+                // Include environment variables from all possible sources since we don't know in which context Serilog is being executed.
+                EnvironmentVariablesHelper.GetElmahIoAppSettingsEnvironmentVariables().ForEach(v => logger.EnvironmentVariables.Add(v));
+                EnvironmentVariablesHelper.GetAspNetCoreEnvironmentVariables().ForEach(v => logger.EnvironmentVariables.Add(v));
+                EnvironmentVariablesHelper.GetDotNetEnvironmentVariables().ForEach(v => logger.EnvironmentVariables.Add(v));
+                EnvironmentVariablesHelper.GetAzureEnvironmentVariables().ForEach(v => logger.EnvironmentVariables.Add(v));
+                EnvironmentVariablesHelper.GetAzureFunctionsEnvironmentVariables().ForEach(v => logger.EnvironmentVariables.Add(v));
+
                 EnsureClient();
 
-                _client.Installations.Create(_options.LogId.ToString(), installation);
+                _options.OnInstallation?.Invoke(installation);
+
+                _client.Installations.CreateAndNotify(_options.LogId, installation);
             }
             catch (Exception e)
             {
