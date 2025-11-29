@@ -70,8 +70,8 @@ namespace Serilog.Sinks.ElmahIo.Tests
         private static void AssertInstalledSink(Logger log)
         {
             var aggregateSinkFieldInfo = log
-                            .GetType()
-                            .GetField("_sink", BindingFlags.Instance | BindingFlags.NonPublic);
+                .GetType()
+                .GetField("_sink", BindingFlags.Instance | BindingFlags.NonPublic);
             var aggregateSink = (ILogEventSink)aggregateSinkFieldInfo?.GetValue(log);
             var sinkEnumerableFieldInfo = aggregateSink?
                 .GetType()

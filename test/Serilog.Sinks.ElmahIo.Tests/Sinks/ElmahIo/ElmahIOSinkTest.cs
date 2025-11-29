@@ -140,7 +140,7 @@ namespace Serilog.Sinks.ElmahIo.Tests.Sinks.ElmahIo
             Assert.That(loggedMessage.Detail, Is.EqualTo(exception.ToString()));
             Assert.That(loggedMessage.Data != null);
             Assert.That(loggedMessage.Data.Any(d => d.Key == "name"));
-#if DOTNETCORE
+#if NETSTANDARD1_1_OR_GREATER || NET6_0_OR_GREATER
             Assert.That(loggedMessage.Data.Any(d => d.Key == "X-ELMAHIO-FRAMEWORKDESCRIPTION"));
 #endif
             Assert.That(loggedMessage.Data.Any(d => d.Key == "X-ELMAHIO-EXCEPTIONINSPECTOR"));

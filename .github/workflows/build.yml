@@ -2,7 +2,7 @@ name: build
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, apiv4 ]
   pull_request:
     branches: [ main ]
 
@@ -12,18 +12,18 @@ jobs:
     runs-on: windows-2025
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: |
-          6.0.x
           8.0.x
           9.0.x
+          10.0.x
 
     - name: Remove ASP.NET sample
-      run: dotnet sln serilog-sinks-elmahio.sln remove examples\Serilog.Sinks.ElmahIo.AspNet\Serilog.Sinks.ElmahIo.AspNet.csproj
+      run: dotnet sln serilog-sinks-elmahio.sln remove samples\Serilog.Sinks.ElmahIo.AspNet.Net48\Serilog.Sinks.ElmahIo.AspNet.Net48.csproj
 
     - name: Install dependencies
       run: dotnet restore
@@ -50,27 +50,27 @@ jobs:
       run: dotnet test --no-restore --verbosity normal
 
     - name: Pack
-      run: dotnet pack --configuration Release src/Serilog.Sinks.ElmahIo/Serilog.Sinks.ElmahIo.csproj /p:Version=5.3.${{ github.run_number }}
+      run: dotnet pack --configuration Release src/Serilog.Sinks.ElmahIo/Serilog.Sinks.ElmahIo.csproj /p:Version=6.0.${{ github.run_number }}-pre
 
     - name: Install dotnet-validate
       run: dotnet tool install --global dotnet-validate --version 0.0.1-preview.537
 
     - name: Validate
-      run: dotnet validate package local src/Serilog.Sinks.ElmahIO/bin/Release/Serilog.Sinks.ElmahIo.5.3.${{ github.run_number }}.nupkg
+      run: dotnet validate package local src/Serilog.Sinks.ElmahIO/bin/Release/Serilog.Sinks.ElmahIo.6.0.${{ github.run_number }}-pre.nupkg
 
     - name: Push
-      run: dotnet nuget push src/Serilog.Sinks.ElmahIo/bin/Release/Serilog.Sinks.ElmahIo.5.3.${{ github.run_number }}.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push src/Serilog.Sinks.ElmahIo/bin/Release/Serilog.Sinks.ElmahIo.6.0.${{ github.run_number }}-pre.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
       if: ${{ github.event_name == 'push' }}
 
-    - name: Refresh Bugster
-      shell: pwsh
-      env:
-        FUNCTION_APP_URL: ${{ secrets.FUNCTION_APP_URL }}
-      run: |
-        $repoName = ($env:GITHUB_REPOSITORY -split '/')[1]
-        $json = @{ repository = $repoName } | ConvertTo-Json -Compress
-        curl --fail-with-body -X POST `
-             -H "Content-Type: application/json" `
-             -d "$json" `
-             $env:FUNCTION_APP_URL
-      if: ${{ github.event_name == 'push' }}
+    # - name: Refresh Bugster
+    #   shell: pwsh
+    #   env:
+    #     FUNCTION_APP_URL: ${{ secrets.FUNCTION_APP_URL }}
+    #   run: |
+    #     $repoName = ($env:GITHUB_REPOSITORY -split '/')[1]
+    #     $json = @{ repository = $repoName } | ConvertTo-Json -Compress
+    #     curl --fail-with-body -X POST `
+    #          -H "Content-Type: application/json" `
+    #          -d "$json" `
+    #          $env:FUNCTION_APP_URL
+    #   if: ${{ github.event_name == 'push' }}

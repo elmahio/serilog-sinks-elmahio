@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Elmah.Io.Client;
+using Serilog.Events;
+using Serilog.Sinks.PeriodicBatching;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,12 +23,9 @@ using System.Net.Http.Headers;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Elmah.Io.Client;
-using Newtonsoft.Json.Linq;
-using Serilog.Events;
-using Serilog.Sinks.PeriodicBatching;
 
 #pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace Serilog.Sinks.ElmahIo
@@ -420,13 +420,26 @@ namespace Serilog.Sinks.ElmahIo
                 if (File.Exists(appsettingsFilePath))
                 {
                     var appsettingsContent = File.ReadAllText(appsettingsFilePath);
-                    var appsettingsObject = JObject.Parse(appsettingsContent);
-                    if (appsettingsObject.TryGetValue("Serilog", out JToken serilogSection))
+
+                    using var doc = JsonDocument.Parse(appsettingsContent);
+
+                    if (doc.RootElement.TryGetProperty("Serilog", out var serilogElement))
                     {
+                        // Build an object with only the Serilog section
+                        var wrapper = new Dictionary<string, JsonElement>
+                        {
+                            ["Serilog"] = serilogElement
+                        };
+
+                        var json = JsonSerializer.Serialize(wrapper, new JsonSerializerOptions
+                        {
+                            WriteIndented = false
+                        });
+
                         logger.ConfigFiles.Add(new ConfigFile
                         {
                             Name = Path.GetFileName(appsettingsFilePath),
-                            Content = new JObject { { "Serilog", serilogSection.DeepClone() } }.ToString(),
+                            Content = json,
                             ContentType = "application/json"
                         });
                     }
