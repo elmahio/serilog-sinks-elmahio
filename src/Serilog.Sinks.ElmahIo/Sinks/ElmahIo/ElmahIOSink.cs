@@ -406,6 +406,9 @@ namespace Serilog.Sinks.ElmahIo
                     EnvironmentVariables = [],
                 };
 
+                logger.Assemblies.TryAddAssemblyIfLoaded("Elmah.Io.AspNetCore.Serilog");
+                logger.Assemblies.TryAddExtensionAssembliesIfLoaded();
+
                 var installation = new CreateInstallation
                 {
                     Type = ApplicationInfoHelper.GetApplicationType(),
